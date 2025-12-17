@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Acesso | Japa Universe</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../../assets/CSS/base.css" />
+    <link rel="stylesheet" href="../CSS/login.css" />
+  </head>
+  <body>
+    <canvas id="background-canvas"></canvas>
+
+    <div class="page-container">
+      <a href="../../../index.html" class="logo">Japa <span>Universe</span></a>
+      <div class="form-box">
+        <div class="toggle-buttons">
+          <button id="showLoginBtn" class="toggle-btn active">Entrar</button>
+          <button id="showRegisterBtn" class="toggle-btn">Registar</button>
+        </div>
+
+        <form id="loginForm" class="form active">
+          <div class="form-group">
+            <input
+              type="email"
+              id="login-email"
+              required
+              autocomplete="email"
+              placeholder=" "
+            />
+            <label for="login-email">E-mail</label>
+          </div>
+          <div class="form-group">
+            <input
+              type="password"
+              id="login-password"
+              required
+              autocomplete="current-password"
+              placeholder=" "
+            />
+            <label for="login-password">Senha</label>
+          </div>
+          <button type="submit" class="btn-primary">Entrar</button>
+          
+          <a href="#" class="forgot-password-link" id="forgotPasswordLink"
+            >Esqueceu sua senha?</a
+          >
+
+          <p class="form-message" id="loginMessage"></p>
+        </form>
+
+        <form id="registerForm" class="form">
+          <div class="form-group">
+            <input
+              type="text"
+              id="register-name"
+              required
+              autocomplete="name"
+              placeholder=" "
+            />
+            <label for="register-name">Nome Completo</label>
+          </div>
+          <div class="form-group">
+            <input
+              type="email"
+              id="register-email"
+              required
+              autocomplete="email"
+              placeholder=" "
+            />
+            <label for="register-email">E-mail</label>
+          </div>
+          <div class="form-group">
+            <input
+              type="password"
+              id="register-password"
+              required
+              autocomplete="new-password"
+              placeholder=" "
+            />
+            <label for="register-password">Senha</label>
+          </div>
+          <button type="submit" class="btn-primary">Criar Conta</button>
+          <p class="form-message" id="registerMessage"></p>
+        </form>
+      </div>
+      <a href="../../../index.html" class="back-link"
+        ><i class="fas fa-arrow-left"></i> Voltar para a loja</a
+      >
+    </div>
+
+    <div id="forgotPasswordModal" class="modal-overlay">
+      <div class="modal-content">
+        <button id="closeModalBtn" class="modal-close">&times;</button>
+        <h2>Redefinir Senha</h2>
+        <p class="modal-text">
+          Digite seu e-mail e enviaremos um link para você redefinir sua senha.
+        </p>
+        <form id="forgotPasswordForm">
+          <div class="form-group">
+            <input
+              type="email"
+              id="forgot-email"
+              required
+              autocomplete="email"
+              placeholder=" "
+            />
+            <label for="forgot-email">Seu e-mail de cadastro</label>
+          </div>
+          <button type="submit" class="btn-primary">Enviar link</button>
+          <p class="form-message" id="forgotMessage"></p>
+        </form>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../js/login.js"></script>
+  </body>
+</html>
