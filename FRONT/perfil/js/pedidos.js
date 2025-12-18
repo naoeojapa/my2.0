@@ -26,6 +26,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return text.replace(/\n/g, '<br>');
     };
 
+    // Função auxiliar para montar URL de imagem corretamente
+    const getImageUrl = (path) => {
+        if (!path) return null;
+        if (path.startsWith('http')) return path;
+        // Garante que não tenha barra dupla ou falta de barra
+        const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+        return `${BASE_URL}/${cleanPath}`;
+    };
+
     // --- ABRIR MODAL DE DETALHES (ATUALIZADO) ---
     const openDetailsModal = (orderId) => {
         const order = currentOrders.find(o => o.id == orderId);
@@ -76,8 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="modal-section">
                 <h4>Itens do Pedido</h4>
                 ${order.itens.map(item => {
-                    // Correção da Imagem: Adiciona a barra / entre BASE_URL e o caminho
-                    const imagePath = item.produto && item.produto.imagemUrl ? `${BASE_URL}/${item.produto.imagemUrl}` : null;
+                    // Correção da Imagem usando a função auxiliar
+                    const imagePath = item.produto && item.produto.imagemUrl ? getImageUrl(item.produto.imagemUrl) : null;
                     return `
                     <div class="order-item-modal">
                         ${imagePath 
@@ -103,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updatesModalBody.innerHTML = '<p>Carregando atualizações...</p>';
             updatesModal.classList.add('active');
 
-            // Correção da API: Usa BASE_URL + /api
+            // CORREÇÃO: Usa BASE_URL
             const response = await axios.get(`${BASE_URL}/api/pedidos/${orderId}/avisos`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -116,12 +125,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="update-item">
                         <p><strong>${new Date(aviso.dataAviso).toLocaleString('pt-BR')}</strong></p>
                         <p>${formatMessage(aviso.mensagem)}</p>
-                        ${aviso.imagemUrl ? `<img src="${BASE_URL}/${aviso.imagemUrl}" alt="Imagem do aviso" class="update-image">` : ''}
+                        ${aviso.imagemUrl ? `<img src="${getImageUrl(aviso.imagemUrl)}" alt="Imagem do aviso" class="update-image">` : ''}
                     </div>
                 `).join('');
             }
 
-            // Marca como lido (Correção da API)
+            // CORREÇÃO: Marca como lido usando BASE_URL
             await axios.post(`${BASE_URL}/api/pedidos/${orderId}/avisos/mark-as-read`, {}, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -142,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- CHECAR AVISOS NÃO LIDOS ---
     const checkUnreadAvisos = async (orderId) => {
         try {
-            // Correção da API
+            // CORREÇÃO: Usa BASE_URL
             const response = await axios.get(`${BASE_URL}/api/pedidos/${orderId}/avisos`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -164,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ordersContainer.innerHTML = '<p>Carregando pedidos...</p>';
 
         try {
-            // Correção da API
+            // CORREÇÃO: Usa BASE_URL
             const response = await axios.get(`${BASE_URL}/api/pedidos`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -202,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="order-body">
                     ${order.itens ? order.itens.map(item => {
                         // Correção da Imagem
-                        const imgUrl = item.produto && item.produto.imagemUrl ? `${BASE_URL}/${item.produto.imagemUrl}` : null;
+                        const imgUrl = item.produto && item.produto.imagemUrl ? getImageUrl(item.produto.imagemUrl) : null;
                         return `
                         <div class="order-item">
                             ${imgUrl 
