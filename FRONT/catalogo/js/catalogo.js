@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_URL = 'http://localhost:8080/api/produtos';
+    const BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://back-production-e565.up.railway.app';
+    const API_URL = `${BASE_URL}/api/produtos`;
     const grid = document.getElementById('products-grid');
     
     if (grid) {
@@ -87,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
             getImageUrl: (path) => {
                 if (!path) return '/assets/images/placeholder-product.jpg';
                 if (path.startsWith('http')) return path;
-                return `http://localhost:8080/${path}`;
+                return {BASE_URL}/{path};
             },
 
             generateSkeletons: (count) => {

@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "http://localhost:8080/api/auth";
+  const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:8080/api/auth' 
+    : 'https://back-production-e565.up.railway.app/api/auth';
 
   const resetPasswordForm = document.getElementById("resetPasswordForm");
   const newPasswordEl = document.getElementById("new-password");

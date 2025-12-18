@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_URL = 'http://localhost:8080/api/public'; // Verifique se a URL está correta para seu backend
-
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:8080/api/public' 
+            : 'https://back-production-e565.up.railway.app/api/public';
+            
     const form = document.getElementById('contactForm');
     const modalOverlay = document.getElementById('successModal');
     const closeModalBtn = document.getElementById('closeModalBtn');

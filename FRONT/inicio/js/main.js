@@ -288,7 +288,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!path) return '/FRONT/assets/images/placeholder-product.jpg'; // Corrigido caminho
             if (path.startsWith('http')) return path;
             // Assume que a API está na raiz se não for URL completa
-            return `http://localhost:8080/${path}`;
+            const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://back-production-e565.up.railway.app';
+            return `${baseUrl}/${path}`;
         } 
     };
   })();
@@ -302,7 +303,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // VETOR IX: CORREÇÃO DE URL CRÍTICA
     // Define a URL base para a API, consistente com o ambiente de DEV (localhost)
     // =========================================================================
-    const API_BASE = 'http://localhost:8080/api'; 
+    const API_BASE = window.location.hostname === 'localhost' 
+        ? 'http://localhost:8080/api' 
+        : 'https://back-production-e565.up.railway.app/api';
     // =========================================================================
 
     // Elementos do DOM

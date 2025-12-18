@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('jwtToken');
     let userRole = '';
-    const apiUrl = 'http://localhost:8080'; 
+    const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8080'
+    : 'https://back-production-e565.up.railway.app';
 
     // Função para decodificar o token JWT
     const parseJwt = (token) => {

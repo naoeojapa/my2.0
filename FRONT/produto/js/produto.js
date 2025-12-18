@@ -2,9 +2,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const productDetailContainer = document.getElementById('product-detail-container');
     
     // Configuração da URL da API (Automática para Local ou Produção)
+    // Configuração da URL da API (Automática para Local ou Produção)
     const BASE_URL = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1')
         ? 'http://localhost:8080'
-        : 'https://japa-back-production.up.railway.app'; 
+        : 'https://back-production-e565.up.railway.app'; // <--- COLOCAMOS O LINK NOVO AQUI
 
     const API_URL = `${BASE_URL}/api/produtos`;
 

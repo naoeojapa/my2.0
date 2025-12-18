@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const ordersContainer = document.getElementById('orders-container');
-    // REVERTIDO PARA A CHAVE CORRETA QUE MANTÉM O LOGIN
+    // Mantém o token para autenticação
     const token = localStorage.getItem('jwtToken');
     
     // Elementos do DOM
@@ -12,8 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightboxImage = document.getElementById('lightbox-image');
     const closeButtons = document.querySelectorAll('.close-modal-btn');
 
-    // URL Base
-    const BASE_URL = 'http://localhost:8080/';
+    // --- CORREÇÃO PRINCIPAL: URL Base Inteligente (Sem barra no final) ---
+    const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:8080'
+        : 'https://back-production-e565.up.railway.app';
 
     // Variável para armazenar pedidos carregados
     let currentOrders = [];
@@ -74,7 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="modal-section">
                 <h4>Itens do Pedido</h4>
                 ${order.itens.map(item => {
-                    const imagePath = item.produto && item.produto.imagemUrl ? `${BASE_URL}${item.produto.imagemUrl}` : null;
+                    // Correção da Imagem: Adiciona a barra / entre BASE_URL e o caminho
+                    const imagePath = item.produto && item.produto.imagemUrl ? `${BASE_URL}/${item.produto.imagemUrl}` : null;
                     return `
                     <div class="order-item-modal">
                         ${imagePath 
@@ -100,7 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
             updatesModalBody.innerHTML = '<p>Carregando atualizações...</p>';
             updatesModal.classList.add('active');
 
-            const response = await axios.get(`http://localhost:8080/api/pedidos/${orderId}/avisos`, {
+            // Correção da API: Usa BASE_URL + /api
+            const response = await axios.get(`${BASE_URL}/api/pedidos/${orderId}/avisos`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const avisos = response.data;
@@ -112,13 +116,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="update-item">
                         <p><strong>${new Date(aviso.dataAviso).toLocaleString('pt-BR')}</strong></p>
                         <p>${formatMessage(aviso.mensagem)}</p>
-                        ${aviso.imagemUrl ? `<img src="${BASE_URL}${aviso.imagemUrl}" alt="Imagem do aviso" class="update-image">` : ''}
+                        ${aviso.imagemUrl ? `<img src="${BASE_URL}/${aviso.imagemUrl}" alt="Imagem do aviso" class="update-image">` : ''}
                     </div>
                 `).join('');
             }
 
-            // Marca como lido
-            await axios.post(`http://localhost:8080/api/pedidos/${orderId}/avisos/mark-as-read`, {}, {
+            // Marca como lido (Correção da API)
+            await axios.post(`${BASE_URL}/api/pedidos/${orderId}/avisos/mark-as-read`, {}, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -138,7 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- CHECAR AVISOS NÃO LIDOS ---
     const checkUnreadAvisos = async (orderId) => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/pedidos/${orderId}/avisos`, {
+            // Correção da API
+            const response = await axios.get(`${BASE_URL}/api/pedidos/${orderId}/avisos`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const hasUnread = response.data.some(aviso => !aviso.lido);
@@ -159,7 +164,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ordersContainer.innerHTML = '<p>Carregando pedidos...</p>';
 
         try {
-            const response = await axios.get('http://localhost:8080/api/pedidos', {
+            // Correção da API
+            const response = await axios.get(`${BASE_URL}/api/pedidos`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             renderOrders(response.data);
@@ -195,7 +201,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="order-body">
                     ${order.itens ? order.itens.map(item => {
-                        const imgUrl = item.produto && item.produto.imagemUrl ? `${BASE_URL}${item.produto.imagemUrl}` : null;
+                        // Correção da Imagem
+                        const imgUrl = item.produto && item.produto.imagemUrl ? `${BASE_URL}/${item.produto.imagemUrl}` : null;
                         return `
                         <div class="order-item">
                             ${imgUrl 

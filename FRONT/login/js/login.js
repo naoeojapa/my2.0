@@ -2,7 +2,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===============================================
   // CONSTANTES DA API
   // ===============================================
-  const API_URL = "http://localhost:8080/api/auth";
+  const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:8080/api/auth' 
+    : 'https://back-production-e565.up.railway.app/api/auth';
 
   // ===============================================
   // LÓGICA DOS FORMULÁRIOS DE LOGIN/REGISTRO

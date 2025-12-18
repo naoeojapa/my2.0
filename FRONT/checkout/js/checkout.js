@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // URL BASE INTELIGENTE
     const BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
         ? 'http://localhost:8080/api'
-        : 'https://japa-backend-production.up.railway.app/api';
+        : 'https://back-production-e565.up.railway.app/api';
 
     if (!token) {
         window.location.href = '../../login/HTML/login.html';
