@@ -63,11 +63,11 @@ INSERT INTO produtos (
     899.90,
     1199.90,
     50,
-    1, 
-    4, 
+    1, -- Marca Nike
+    4, -- Categoria Dunk
     'NIKE_DUNK_PANDA',
     'uploads/dnBlack.webp',  
-    'uploads/dnBlack.webp',
+    'uploads/nike-panda-costas.jpg',
     NULL,
     NULL
-),
+);
