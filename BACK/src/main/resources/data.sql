@@ -2,14 +2,14 @@
 -- ARQUIVO: BACK/src/main/resources/data.sql
 -- ==================================================================================
 
--- 1. LIMPEZA (Se necessário, já que está em create ele limpa sozinho, mas mal não faz)
+-- 1. LIMPEZA
 DELETE FROM itens_pedido;
 DELETE FROM pagamentos;
 DELETE FROM pedidos;
 DELETE FROM produtos;
 DELETE FROM categorias;
 DELETE FROM marcas;
-DELETE FROM usuarios;
+DELETE FROM _usuario;  -- <--- CORRIGIDO AQUI (era usuarios)
 
 -- 2. INSERÇÃO DE MARCAS
 INSERT INTO marcas (id, nome) VALUES 
@@ -24,7 +24,8 @@ INSERT INTO categorias (id, nome) VALUES
 (9, 'Corrida'), (10, 'Botas'), (11, 'Chuteiras'), (12, 'Sandálias');
 
 -- 4. USUÁRIO ADMIN (Vinicius)
-INSERT INTO usuarios (nome, email, cpf, telefone, senha, role) VALUES
+-- Tabela corrigida para _usuario
+INSERT INTO _usuario (nome, email, cpf, telefone, senha, role) VALUES -- <--- CORRIGIDO AQUI
 ('Vinicius Admin', 
  'vinicius.biancolini.tds24@gmail.com', 
  '000.000.000-00', 
