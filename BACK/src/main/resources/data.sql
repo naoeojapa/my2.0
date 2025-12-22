@@ -32,3 +32,42 @@ INSERT INTO _usuario (nome, email, cpf, telefone, senha, role) VALUES -- <--- CO
  '11999999999', 
  '$2a$10$C0iH.HkG8Nh73C57GC7oT.jxzLawZbas/miJPJVP2qhTcpbZI0soq', 
  'ROLE_ADMIN');
+
+ -- ==================================================================================
+-- ARQUIVO: BACK/src/main/resources/data.sql
+-- ==================================================================================
+
+-- ... (Mantenha os DELETEs e os INSERTS de Marcas/Categorias/Usuarios que já fizemos) ...
+
+-- 5. INSERÇÃO DE PRODUTOS (COM IMAGENS LOCAIS)
+
+INSERT INTO produtos (
+    nome, 
+    descricao, 
+    preco, 
+    preco_original, 
+    estoque, 
+    marca_id, 
+    categoria_id, 
+    codigo_modelo, 
+    imagem_url,   
+    imagem_url_2,
+    imagem_url_3, 
+    imagem_url_4
+) VALUES 
+
+-- PRODUTO 1: Nike Dunk Panda
+(
+    'Nike Dunk Low Panda',
+    'O clássico preto e branco que combina com tudo.',
+    899.90,
+    1199.90,
+    50,
+    1, 
+    4, 
+    'NIKE_DUNK_PANDA',
+    'uploads/dnBlack.webp',  
+    'uploads/dnBlack.webp',
+    NULL,
+    NULL
+),
