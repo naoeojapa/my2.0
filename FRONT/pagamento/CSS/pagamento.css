@@ -1,51 +1,83 @@
 /* FRONT/pagamento/CSS/pagamento.css */
 
+/* === HEADER (Logo) === */
+.simple-header {
+    width: 100%;
+    padding: 20px 0;
+    text-align: center; /* Centraliza o logo na página */
+    position: absolute; /* Garante que fique no topo sem empurrar tudo torto */
+    top: 0;
+    left: 0;
+    background-color: transparent;
+    z-index: 10;
+}
+
+.simple-header .logo {
+    font-family: 'Bebas Neue', sans-serif; /* Fonte oficial do site */
+    font-size: 3rem; /* Tamanho grande e legível */
+    text-decoration: none;
+    color: var(--text-primary, #333); /* Usa a cor padrão ou cinza escuro */
+    letter-spacing: 2px;
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
+.simple-header .logo span {
+    color: var(--primary, #e63946); /* Cor de destaque (Vermelho/Laranja do tema) */
+}
+
+.simple-header .logo:hover {
+    transform: scale(1.05); /* Efeito sutil ao passar o mouse */
+}
+
+/* === LAYOUT PAGAMENTO === */
+
 /* Container Principal */
 .payment-container {
     max-width: 1000px; /* Aumentado para PC */
-    margin: 100px auto 60px; /* Mais espaço do topo */
+    margin: 120px auto 60px; /* Mais espaço do topo por causa do logo */
     padding: 0 20px;
     display: flex;
     justify-content: center;
     min-height: 60vh;
 }
 
-/* Caixa Principal com tema Dark */
+/* Caixa Principal com tema Dark/Light adaptável */
 .payment-box {
-    background-color: var(--surface); /* Fundo escuro */
+    background-color: var(--surface, #fff); /* Fundo */
     width: 100%;
     padding: 50px;
     border-radius: 16px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); /* Sombra mais dramática */
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15); /* Sombra elegante */
+    border: 1px solid var(--border-color, #eee);
+    color: var(--text-primary, #333);
     text-align: center;
 }
 
 /* Header da Caixa */
 .payment-header {
     margin-bottom: 40px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color, #eee);
     padding-bottom: 20px;
 }
 
 .payment-header h2 {
-    font-family: var(--font-display);
+    font-family: 'Bebas Neue', sans-serif;
     font-size: 2.5rem;
-    color: var(--primary);
+    color: var(--primary, #333);
     margin: 15px 0 5px;
     letter-spacing: 1px;
 }
 
 .payment-header p {
-    color: var(--text-secondary);
+    color: var(--text-secondary, #666);
     font-size: 1.1rem;
 }
 
 /* Timer */
 .timer {
-    background-color: rgba(255, 122, 0, 0.15); /* Laranja transparente */
-    color: var(--primary);
+    background-color: rgba(255, 122, 0, 0.1); 
+    color: var(--primary, #e65100);
     padding: 8px 20px;
     border-radius: 30px;
     display: inline-flex;
@@ -53,7 +85,7 @@
     gap: 10px;
     font-weight: 600;
     font-size: 0.9rem;
-    border: 1px solid rgba(255, 122, 0, 0.3);
+    border: 1px solid rgba(255, 122, 0, 0.2);
 }
 
 /* GRID LAYOUT (PC) */
@@ -70,16 +102,16 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--background);
+    background-color: var(--background, #f9f9f9);
     padding: 30px;
     border-radius: 12px;
-    border: 1px dashed var(--border-color);
+    border: 1px dashed var(--border-color, #ccc);
 }
 
 .qr-wrapper canvas {
-    border: 8px solid #fff; /* Borda branca para contraste do QR */
+    border: 8px solid #fff; 
     border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     max-width: 100%;
 }
 
@@ -95,7 +127,7 @@
     display: block;
     font-weight: 600;
     margin-bottom: 10px;
-    color: var(--text-primary);
+    color: var(--text-primary, #333);
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -110,38 +142,38 @@
 .input-group input {
     flex: 1;
     padding: 14px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-color, #ccc);
     border-radius: 8px;
-    font-family: var(--font-mono);
-    background-color: var(--background);
-    color: var(--text-primary);
+    font-family: monospace;
+    background-color: var(--background, #f5f5f5);
+    color: var(--text-primary, #333);
     font-size: 0.9rem;
 }
 
 .input-group input:focus {
     outline: none;
-    border-color: var(--primary);
+    border-color: var(--primary, #333);
 }
 
 .input-group button {
     padding: 0 20px;
-    background-color: var(--primary);
+    background-color: var(--primary, #333);
     color: #fff;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-size: 1.1rem;
-    transition: var(--transition-fast);
+    transition: 0.2s;
 }
 
 .input-group button:hover {
-    background-color: var(--primary-light);
+    opacity: 0.9;
     transform: translateY(-2px);
 }
 
 .fade-msg {
     display: block;
-    color: #00e676; /* Verde neon */
+    color: #28a745; /* Verde Sucesso */
     font-size: 0.85rem;
     margin-top: 5px;
     opacity: 0;
@@ -155,17 +187,17 @@
     font-weight: 700;
     margin: 25px 0;
     padding: 20px 0;
-    border-top: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
-    color: var(--text-primary);
+    border-top: 1px solid var(--border-color, #eee);
+    border-bottom: 1px solid var(--border-color, #eee);
+    color: var(--text-primary, #333);
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .total-display span {
-    color: var(--primary);
-    font-family: var(--font-display);
+    color: var(--primary, #333);
+    font-family: 'Bebas Neue', sans-serif;
     font-size: 2rem;
     letter-spacing: 1px;
 }
@@ -173,14 +205,14 @@
 /* Instruções */
 .instructions {
     margin-bottom: 30px;
-    background-color: rgba(255, 255, 255, 0.03);
+    background-color: rgba(0, 0, 0, 0.02);
     padding: 20px;
     border-radius: 8px;
 }
 
 .instructions p {
     margin-bottom: 12px;
-    color: var(--text-secondary);
+    color: var(--text-secondary, #555);
     display: flex;
     align-items: center;
     gap: 12px;
@@ -188,7 +220,7 @@
 }
 
 .instructions p i {
-    color: var(--primary);
+    color: var(--primary, #333);
     width: 20px;
     text-align: center;
 }
@@ -196,10 +228,15 @@
 .instructions p:last-child {
     margin-bottom: 0;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--text-primary, #333);
 }
 
 /* Botões */
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
 .btn-secondary, .btn-primary {
     display: inline-block;
     text-decoration: none;
@@ -217,25 +254,24 @@
 
 .btn-secondary {
     background-color: transparent;
-    border: 2px solid var(--border-color);
-    color: var(--text-secondary);
+    border: 2px solid var(--border-color, #ccc);
+    color: var(--text-secondary, #666);
 }
 
 .btn-secondary:hover {
-    border-color: var(--primary);
-    color: var(--primary);
+    border-color: var(--primary, #333);
+    color: var(--primary, #333);
 }
 
 .btn-primary {
-    background-color: var(--primary);
+    background-color: #28a745;
     color: #fff;
     border: none;
     margin-top: 10px;
 }
 
 .btn-primary:hover {
-    background-color: var(--primary-light);
-    box-shadow: 0 0 20px rgba(255, 122, 0, 0.4);
+    background-color: #218838;
 }
 
 /* Tela de Sucesso */
@@ -248,7 +284,7 @@
 
 .success-icon {
     font-size: 5rem;
-    color: #00e676;
+    color: #28a745;
     margin-bottom: 25px;
     animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -265,17 +301,21 @@
 /* ===== RESPONSIVIDADE (Mobile) ===== */
 @media (max-width: 768px) {
     .payment-container {
-        margin-top: 80px;
+        margin-top: 100px; /* Ajuste para o logo não sobrepor no mobile */
         padding: 0 15px;
-        align-items: flex-start; /* Para não centralizar verticalmente em telas pequenas */
+        align-items: flex-start;
     }
     
+    .simple-header .logo {
+        font-size: 2.2rem; /* Logo um pouco menor no celular */
+    }
+
     .payment-box {
-        padding: 25px; /* Menos padding no mobile */
+        padding: 25px;
     }
 
     .payment-content {
-        grid-template-columns: 1fr; /* Volta para 1 coluna */
+        grid-template-columns: 1fr;
         gap: 30px;
     }
 
