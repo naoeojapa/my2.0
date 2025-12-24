@@ -11,16 +11,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const pendingBox = document.getElementById('payment-pending');
     const successBox = document.getElementById('payment-success');
 
-    // URL da API (Ajusta automaticamente localhost ou produção)
-    const BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
-        ? 'http://localhost:8080/api'
-        : 'https://back-production-e565.up.railway.app/api';
+    // 1. Configuração da URL da API
+    // Verifica se está rodando no seu computador (localhost) ou na internet (Railway)
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    const BASE_URL = isLocal 
+        ? 'http://localhost:8080' 
+        : 'https://back-production-e565.up.railway.app';
 
+    // Verifica login
     if (!token) {
         window.location.href = '../../login/HTML/login.html';
         return;
     }
 
+    // Verifica ID do pedido
     if (!pedidoId) {
         alert('Pedido não encontrado.');
         window.location.href = '../../index.html';
@@ -28,14 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Configuração do Axios
+    // Adicionamos "/api" aqui para bater certo com o seu Java (@RequestMapping("/api/pedidos"))
     const apiClient = axios.create({
-        baseURL: BASE_URL,
+        baseURL: `${BASE_URL}/api`,
         headers: { 'Authorization': `Bearer ${token}` }
     });
 
-    // 1. Carrega os dados do pedido ao abrir a tela
+    // 2. Carrega os dados do pedido ao abrir a tela
     async function carregarPedido() {
         try {
+            // Vai chamar: .../api/pedidos/{id}
             const res = await apiClient.get(`/pedidos/${pedidoId}`);
             const pedido = res.data;
 
@@ -59,12 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Erro ao carregar pedido:', error);
-            alert('Erro ao carregar detalhes do pagamento.');
+            alert('Erro ao carregar detalhes do pagamento. Verifique o console.');
         }
     }
 
-    // 2. Desenha o QR Code usando a biblioteca QRious
+    // 3. Desenha o QR Code usando a biblioteca QRious
     function renderizarQRCode(textoPix) {
+        if (!qrCanvas) return; // Proteção caso o canvas não exista
         new QRious({
             element: qrCanvas,
             value: textoPix,
@@ -73,21 +81,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Função do botão Copiar
+    // 4. Função do botão Copiar
     window.copiarCodigo = function() {
+        if (!pixInput.value) return;
+        
         pixInput.select();
         pixInput.setSelectionRange(0, 99999); // Mobile
-        navigator.clipboard.writeText(pixInput.value).then(() => {
-            const msg = document.getElementById('copy-msg');
-            msg.style.opacity = '1';
-            setTimeout(() => msg.style.opacity = '0', 2000);
-        });
+        
+        navigator.clipboard.writeText(pixInput.value)
+            .then(() => {
+                const msg = document.getElementById('copy-msg');
+                if (msg) {
+                    msg.style.opacity = '1';
+                    setTimeout(() => msg.style.opacity = '0', 2000);
+                }
+            })
+            .catch(err => console.error('Erro ao copiar:', err));
     }
 
-    // 4. Polling: Verifica o status a cada 5 segundos
+    // 5. Polling: Verifica o status a cada 5 segundos
     let intervalId = null;
     function iniciarMonitoramento() {
-        // Verifica a cada 5 segundos
+        // Limpa intervalo anterior se existir
+        if (intervalId) clearInterval(intervalId);
+
         intervalId = setInterval(async () => {
             try {
                 const res = await apiClient.get(`/pedidos/${pedidoId}`);
@@ -100,13 +117,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 console.error('Erro no monitoramento:', error);
+                // Não paramos o intervalo em caso de erro de rede temporário
             }
         }, 5000);
     }
 
     function mostrarSucesso() {
-        pendingBox.classList.add('hidden');
-        successBox.classList.remove('hidden');
+        if (pendingBox) pendingBox.classList.add('hidden');
+        if (successBox) successBox.classList.remove('hidden');
         
         // Toca um som ou vibra (opcional para mobile)
         if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
