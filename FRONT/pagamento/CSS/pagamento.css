@@ -1,206 +1,306 @@
 /* FRONT/pagamento/CSS/pagamento.css */
 
-/* Container Principal Centralizado */
+/* Container Principal */
 .payment-container {
-    max-width: 500px;
-    margin: 80px auto; /* Margem superior para não colar no topo */
+    max-width: 1000px; /* Aumentado para PC */
+    margin: 100px auto 60px; /* Mais espaço do topo */
     padding: 0 20px;
     display: flex;
     justify-content: center;
-    align-items: center;
     min-height: 60vh;
 }
 
-/* Caixa Branca do Pagamento */
+/* Caixa Principal com tema Dark */
 .payment-box {
-    background-color: #fff; /* ou var(--color-white) se definido no base.css */
+    background-color: var(--surface); /* Fundo escuro */
     width: 100%;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    padding: 50px;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); /* Sombra mais dramática */
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
     text-align: center;
-    border: 1px solid #e1e1e1;
 }
 
-/* Título */
-.payment-box h2 {
-    font-family: 'Bebas Neue', sans-serif; /* Fonte do seu projeto */
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 10px;
+/* Header da Caixa */
+.payment-header {
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 20px;
 }
 
-.payment-box p {
-    color: #666;
-    margin-bottom: 25px;
+.payment-header h2 {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin: 15px 0 5px;
+    letter-spacing: 1px;
 }
 
-/* Timer (Reloginho) */
+.payment-header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* Timer */
 .timer {
-    background-color: #fff3cd;
-    color: #856404;
-    padding: 8px 16px;
-    border-radius: 20px;
+    background-color: rgba(255, 122, 0, 0.15); /* Laranja transparente */
+    color: var(--primary);
+    padding: 8px 20px;
+    border-radius: 30px;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     font-weight: 600;
-    margin-bottom: 25px;
     font-size: 0.9rem;
+    border: 1px solid rgba(255, 122, 0, 0.3);
 }
 
-/* Área do QR Code */
-.qr-wrapper {
-    margin: 20px 0;
-    display: flex;
-    justify-content: center;
-}
-
-#qr-code-canvas {
-    border: 4px solid #f0f0f0;
-    border-radius: 8px;
-    padding: 10px;
-}
-
-/* Área Copia e Cola */
-.copy-paste-section {
-    margin: 25px 0;
+/* GRID LAYOUT (PC) */
+.payment-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Duas colunas iguais */
+    gap: 50px;
+    align-items: start;
     text-align: left;
 }
 
+/* Coluna Esquerda (QR Code) */
+.col-left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--background);
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px dashed var(--border-color);
+}
+
+.qr-wrapper canvas {
+    border: 8px solid #fff; /* Borda branca para contraste do QR */
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    max-width: 100%;
+}
+
+/* Coluna Direita (Detalhes) */
+.col-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Inputs */
 .copy-paste-section label {
     display: block;
     font-weight: 600;
-    margin-bottom: 8px;
-    color: #333;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .input-group {
     display: flex;
     gap: 10px;
+    margin-bottom: 5px;
 }
 
 .input-group input {
     flex: 1;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-family: monospace;
-    background-color: #f9f9f9;
-    color: #555;
+    padding: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    background-color: var(--background);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary);
 }
 
 .input-group button {
     padding: 0 20px;
-    background-color: #333; /* Cor escura do tema */
+    background-color: var(--primary);
     color: #fff;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    font-weight: 600;
-    transition: background 0.3s;
+    font-size: 1.1rem;
+    transition: var(--transition-fast);
 }
 
 .input-group button:hover {
-    background-color: #000;
+    background-color: var(--primary-light);
+    transform: translateY(-2px);
 }
 
-/* Mensagem "Copiado!" */
 .fade-msg {
     display: block;
-    color: #28a745;
+    color: #00e676; /* Verde neon */
     font-size: 0.85rem;
     margin-top: 5px;
     opacity: 0;
     transition: opacity 0.3s;
-    height: 20px; /* Reserva espaço */
+    height: 20px;
 }
 
 /* Total */
 .total-display {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     font-weight: 700;
-    margin: 20px 0;
-    padding-top: 20px;
-    border-top: 1px dashed #ddd;
-    color: #333;
+    margin: 25px 0;
+    padding: 20px 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total-display span {
+    color: var(--primary);
+    font-family: var(--font-display);
+    font-size: 2rem;
+    letter-spacing: 1px;
 }
 
 /* Instruções */
 .instructions {
-    text-align: left;
-    background-color: #f8f9fa;
-    padding: 15px;
+    margin-bottom: 30px;
+    background-color: rgba(255, 255, 255, 0.03);
+    padding: 20px;
     border-radius: 8px;
-    font-size: 0.9rem;
-    color: #555;
-    margin-bottom: 25px;
 }
 
 .instructions p {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.95rem;
+}
+
+.instructions p i {
+    color: var(--primary);
+    width: 20px;
+    text-align: center;
+}
+
+.instructions p:last-child {
+    margin-bottom: 0;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 /* Botões */
 .btn-secondary, .btn-primary {
     display: inline-block;
     text-decoration: none;
-    padding: 12px 30px;
-    border-radius: 6px;
-    font-weight: 600;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     transition: 0.3s;
     width: 100%;
+    text-align: center;
     box-sizing: border-box;
+    cursor: pointer;
 }
 
 .btn-secondary {
     background-color: transparent;
-    border: 1px solid #ccc;
-    color: #666;
+    border: 2px solid var(--border-color);
+    color: var(--text-secondary);
 }
 
 .btn-secondary:hover {
-    background-color: #f0f0f0;
-    color: #333;
+    border-color: var(--primary);
+    color: var(--primary);
 }
 
 .btn-primary {
-    background-color: #28a745;
-    color: white;
+    background-color: var(--primary);
+    color: #fff;
     border: none;
+    margin-top: 10px;
 }
 
 .btn-primary:hover {
-    background-color: #218838;
+    background-color: var(--primary-light);
+    box-shadow: 0 0 20px rgba(255, 122, 0, 0.4);
 }
 
 /* Tela de Sucesso */
+.success-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
 .success-icon {
-    font-size: 4rem;
-    color: #28a745;
-    margin-bottom: 20px;
+    font-size: 5rem;
+    color: #00e676;
+    margin-bottom: 25px;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 
 .hidden {
     display: none !important;
 }
 
-/* Responsivo para celular */
-@media (max-width: 600px) {
+/* ===== RESPONSIVIDADE (Mobile) ===== */
+@media (max-width: 768px) {
     .payment-container {
-        margin: 20px auto;
+        margin-top: 80px;
         padding: 0 15px;
+        align-items: flex-start; /* Para não centralizar verticalmente em telas pequenas */
     }
     
     .payment-box {
-        padding: 25px;
+        padding: 25px; /* Menos padding no mobile */
     }
-    
+
+    .payment-content {
+        grid-template-columns: 1fr; /* Volta para 1 coluna */
+        gap: 30px;
+    }
+
+    .payment-header h2 {
+        font-size: 2rem;
+    }
+
+    .col-left {
+        padding: 20px;
+    }
+
+    .qr-wrapper canvas {
+        width: 200px !important;
+        height: 200px !important;
+    }
+
     .input-group {
         flex-direction: column;
     }
     
     .input-group button {
         padding: 12px;
+    }
+
+    .total-display span {
+        font-size: 1.5rem;
     }
 }

@@ -20,50 +20,63 @@
     <main class="payment-container">
         
         <div id="payment-pending" class="payment-box">
-            <div class="timer">
-                <i class="far fa-clock"></i> Aguardando pagamento...
-            </div>
-
-            <h2>Pagamento via PIX</h2>
-            <p>Escaneie o QR Code abaixo ou copie o código.</p>
-
-            <div class="qr-wrapper">
-                <canvas id="qr-code-canvas"></canvas>
-            </div>
-
-            <div class="copy-paste-section">
-                <label>Pix Copia e Cola:</label>
-                <div class="input-group">
-                    <input type="text" id="pix-code-input" readonly>
-                    <button id="btn-copy" onclick="copiarCodigo()">
-                        <i class="far fa-copy"></i> Copiar
-                    </button>
-                </div>
-                <span id="copy-msg" class="fade-msg">Copiado!</span>
-            </div>
-
-            <div class="total-display">
-                Total: <span id="valor-total">R$ 0,00</span>
-            </div>
-
-            <div class="instructions">
-                <p>1. Abra o app do seu banco.</p>
-                <p>2. Escolha Pix > Pagar com QR Code ou Copia e Cola.</p>
-                <p>3. Após pagar, <strong>aguarde nesta tela</strong> pela confirmação automática.</p>
-            </div>
             
-            <a href="/FRONT/perfil/HTML/pedidos.html" class="btn-secondary">Ver Meus Pedidos</a>
+            <div class="payment-header">
+                <div class="timer">
+                    <i class="far fa-clock"></i> Aguardando pagamento...
+                </div>
+                <h2>Pagamento via PIX</h2>
+                <p>Escaneie o QR Code ou use o Copia e Cola.</p>
+            </div>
+
+            <div class="payment-content">
+                
+                <div class="col-left">
+                    <div class="qr-wrapper">
+                        <canvas id="qr-code-canvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="col-right">
+                    <div class="copy-paste-section">
+                        <label>Pix Copia e Cola:</label>
+                        <div class="input-group">
+                            <input type="text" id="pix-code-input" readonly>
+                            <button id="btn-copy" onclick="copiarCodigo()">
+                                <i class="far fa-copy"></i>
+                            </button>
+                        </div>
+                        <span id="copy-msg" class="fade-msg">Copiado com sucesso!</span>
+                    </div>
+
+                    <div class="total-display">
+                        Total: <span id="valor-total">R$ 0,00</span>
+                    </div>
+
+                    <div class="instructions">
+                        <p><i class="fas fa-mobile-alt"></i> Abra o app do seu banco</p>
+                        <p><i class="fas fa-qrcode"></i> Escolha Pix > Pagar com QR Code</p>
+                        <p><i class="fas fa-check"></i> Aguarde a confirmação aqui</p>
+                    </div>
+                    
+                    <div class="actions">
+                        <a href="/FRONT/perfil/HTML/pedidos.html" class="btn-secondary">Meus Pedidos</a>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div id="payment-success" class="payment-box hidden">
-            <div class="success-icon">
-                <i class="fas fa-check-circle"></i>
+        <div id="payment-success" class="payment-box hidden success-box">
+            <div class="success-content">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>Pagamento Confirmado!</h2>
+                <p>Seu pedido já está sendo processado pela nossa equipe.</p>
+                <div class="success-actions">
+                    <a href="/FRONT/perfil/HTML/pedidos.html" class="btn-primary">Acompanhar Entrega</a>
+                </div>
             </div>
-            <h2>Pagamento Aprovado!</h2>
-            <p>Recebemos seu pagamento. Seu pedido está sendo preparado.</p>
-            <p>Você receberá um e-mail com os detalhes.</p>
-            
-            <a href="/FRONT/perfil/HTML/pedidos.html" class="btn-primary">Acompanhar Pedido</a>
         </div>
 
     </main>
