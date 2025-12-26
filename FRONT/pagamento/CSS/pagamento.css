@@ -102,17 +102,24 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
     background-color: var(--background, #f9f9f9);
-    padding: 30px;
+    padding: 20px; /* Reduzi um pouco o padding para dar mais espaço ao QR */
     border-radius: 12px;
     border: 1px dashed var(--border-color, #ccc);
 }
-
+ .qr-wrapper {
+    width: 100%;
+    max-width: 320px; /* Define um limite máximo elegante para PC */
+    display: flex;
+    justify-content: center;
+}
 .qr-wrapper canvas {
-    border: 8px solid #fff; 
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    max-width: 100%;
+    width: 100% !important; /* Força o Canvas a preencher o wrapper */
+    height: auto !important; /* Mantém a proporção quadrada */
+    border: 10px solid #fff; /* Borda branca um pouco mais grossa */
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
 /* Coluna Direita (Detalhes) */
@@ -325,11 +332,6 @@
 
     .col-left {
         padding: 20px;
-    }
-
-    .qr-wrapper canvas {
-        width: 200px !important;
-        height: 200px !important;
     }
 
     .input-group {

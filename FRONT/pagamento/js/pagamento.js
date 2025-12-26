@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         new QRious({
             element: qrCanvas,
             value: textoPix,
-            size: 200,
+            size: 400,
             level: 'H' // Alta correção de erro
         });
     }
