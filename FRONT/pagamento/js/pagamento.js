@@ -11,125 +11,148 @@ document.addEventListener('DOMContentLoaded', () => {
     const pendingBox = document.getElementById('payment-pending');
     const successBox = document.getElementById('payment-success');
 
-    // 1. Configuração da URL da API
-    // Verifica se está rodando no seu computador (localhost) ou na internet (Railway)
+    // Configuração de URL
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    
     const BASE_URL = isLocal 
-        ? 'http://localhost:8080' 
-        : 'https://back-production-e565.up.railway.app';
+        ? 'http://localhost:8080/api'
+        : 'https://back-production-e565.up.railway.app/api';
 
-    // Verifica login
+    // Verificações de Segurança
     if (!token) {
-        window.location.href = '../../login/HTML/login.html';
+        window.location.href = '/FRONT/login/HTML/login.html';
         return;
     }
 
-    // Verifica ID do pedido
     if (!pedidoId) {
         alert('Pedido não encontrado.');
-        window.location.href = '../../index.html';
+        window.location.href = '/index.html';
         return;
     }
 
-    // Configuração do Axios
-    // Adicionamos "/api" aqui para bater certo com o seu Java (@RequestMapping("/api/pedidos"))
+    // Configuração Axios
     const apiClient = axios.create({
-        baseURL: `${BASE_URL}/api`,
+        baseURL: BASE_URL,
         headers: { 'Authorization': `Bearer ${token}` }
     });
 
-    // 2. Carrega os dados do pedido ao abrir a tela
+    // 1. Carrega dados do pedido
     async function carregarPedido() {
         try {
-            // Vai chamar: .../api/pedidos/{id}
             const res = await apiClient.get(`/pedidos/${pedidoId}`);
             const pedido = res.data;
 
-            // Se já estiver pago, mostra sucesso direto
+            // Se já estiver pago, mostra tela de sucesso sem animação
             if (pedido.status === 'PAGO' || pedido.status === 'ENVIADO' || pedido.status === 'ENTREGUE') {
-                mostrarSucesso();
+                mostrarSucesso(false); 
                 return;
             }
 
-            // Preenche valores na tela
+            // Preenche valores
             valorTotalEl.textContent = `R$ ${pedido.valorTotal.toFixed(2).replace('.', ',')}`;
             
-            // Se tiver o código Pix, desenha
+            // Gera QR Code
             if (pedido.pixCopiaECola) {
                 renderizarQRCode(pedido.pixCopiaECola);
                 pixInput.value = pedido.pixCopiaECola;
             }
 
-            // Inicia a verificação automática (Polling)
+            // Começa a vigiar o status
             iniciarMonitoramento();
 
         } catch (error) {
             console.error('Erro ao carregar pedido:', error);
-            alert('Erro ao carregar detalhes do pagamento. Verifique o console.');
+            if (error.response && error.response.status === 403) {
+                 window.location.href = '/FRONT/login/HTML/login.html';
+            }
         }
     }
 
-    // 3. Desenha o QR Code usando a biblioteca QRious
     function renderizarQRCode(textoPix) {
-        if (!qrCanvas) return; // Proteção caso o canvas não exista
-        new QRious({
-            element: qrCanvas,
-            value: textoPix,
-            size: 400,
-            level: 'H' // Alta correção de erro
+        if(qrCanvas) {
+            new QRious({
+                element: qrCanvas,
+                value: textoPix,
+                size: 200,
+                level: 'H'
+            });
+        }
+    }
+
+    window.copiarCodigo = function() {
+        pixInput.select();
+        pixInput.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(pixInput.value).then(() => {
+            const msg = document.getElementById('copy-msg');
+            msg.style.opacity = '1';
+            setTimeout(() => msg.style.opacity = '0', 2000);
         });
     }
 
-    // 4. Função do botão Copiar
-    window.copiarCodigo = function() {
-        if (!pixInput.value) return;
-        
-        pixInput.select();
-        pixInput.setSelectionRange(0, 99999); // Mobile
-        
-        navigator.clipboard.writeText(pixInput.value)
-            .then(() => {
-                const msg = document.getElementById('copy-msg');
-                if (msg) {
-                    msg.style.opacity = '1';
-                    setTimeout(() => msg.style.opacity = '0', 2000);
-                }
-            })
-            .catch(err => console.error('Erro ao copiar:', err));
-    }
-
-    // 5. Polling: Verifica o status a cada 5 segundos
+    // 2. Monitoramento Automático (Polling)
     let intervalId = null;
     function iniciarMonitoramento() {
-        // Limpa intervalo anterior se existir
         if (intervalId) clearInterval(intervalId);
-
+        
         intervalId = setInterval(async () => {
             try {
                 const res = await apiClient.get(`/pedidos/${pedidoId}`);
                 const status = res.data.status;
-                console.log('Verificando status...', status);
-
+                
+                // Se pagou, para de verificar e chama a animação
                 if (status === 'PAGO' || status === 'ENVIADO') {
-                    mostrarSucesso();
-                    clearInterval(intervalId); // Para de verificar
+                    mostrarSucesso(true); // TRUE = Disparar animação!
+                    clearInterval(intervalId);
                 }
             } catch (error) {
                 console.error('Erro no monitoramento:', error);
-                // Não paramos o intervalo em caso de erro de rede temporário
             }
-        }, 5000);
+        }, 5000); // Verifica a cada 5 segundos
     }
 
-    function mostrarSucesso() {
-        if (pendingBox) pendingBox.classList.add('hidden');
-        if (successBox) successBox.classList.remove('hidden');
+    // 3. Função de Sucesso e Animação
+    function mostrarSucesso(animar = true) {
+        if(pendingBox) pendingBox.classList.add('hidden');
+        if(successBox) successBox.classList.remove('hidden');
         
-        // Toca um som ou vibra (opcional para mobile)
-        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+        if (animar) {
+            // Toca vibração no celular (tzzz tzzz)
+            if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]);
+            
+            // Dispara a chuva de confetes
+            dispararConfetes();
+        }
     }
 
-    // Iniciar
+    // Lógica da biblioteca Canvas Confetti
+    function dispararConfetes() {
+        var duration = 3 * 1000;
+        var animationEnd = Date.now() + duration;
+        var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        var interval = setInterval(function() {
+            var timeLeft = animationEnd - Date.now();
+
+            if (timeLeft <= 0) {
+                return clearInterval(interval);
+            }
+
+            var particleCount = 50 * (timeLeft / duration);
+            
+            // Lança confetes de dois lados da tela
+            confetti(Object.assign({}, defaults, { 
+                particleCount, 
+                origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } 
+            }));
+            confetti(Object.assign({}, defaults, { 
+                particleCount, 
+                origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } 
+            }));
+        }, 250);
+    }
+
     carregarPedido();
 });
