@@ -18,6 +18,10 @@ public class PixPayloadService {
     @Value("${mercadopago.access_token}")
     private String accessToken;
 
+    // Pega a URL que definimos no application.properties
+    @Value("${api.webhook.url}")
+    private String webhookUrl;
+
     private final PedidoRepository pedidoRepository;
 
     public PixPayloadService(PedidoRepository pedidoRepository) {
@@ -26,15 +30,14 @@ public class PixPayloadService {
 
     public String generatePayload(Pedido pedido) {
         try {
-            // Se o token ainda for o placeholder, retorna um erro amigável no console
+            // Validação simples do token
             if (accessToken == null || accessToken.contains("COLE_SEU_TOKEN")) {
-                System.err.println(">>> ERRO: Token do Mercado Pago não configurado no application.properties");
+                System.err.println(">>> ERRO: Token do Mercado Pago não configurado.");
                 return null;
             }
 
             // 1. Configura o Token
             MercadoPagoConfig.setAccessToken(accessToken);
-
             PaymentClient client = new PaymentClient();
 
             // 2. Prepara os dados do Pagador (Cliente)
@@ -47,18 +50,19 @@ public class PixPayloadService {
                     .firstName(pedido.getNomeDestinatario())
                     .build();
 
-            // 3. Cria a requisição de Pagamento
+            // 3. Cria a requisição de Pagamento (COM O WEBHOOK AGORA)
             PaymentCreateRequest paymentCreateRequest = PaymentCreateRequest.builder()
                     .transactionAmount(pedido.getValorTotal())
                     .description("Pedido #" + pedido.getId() + " - Japa Universe")
                     .paymentMethodId("pix")
+                    .notificationUrl(webhookUrl) // <--- ESSA LINHA É A MÁGICA QUE FALTAVA
                     .payer(payer)
                     .build();
 
             // 4. Envia para o Mercado Pago
             Payment payment = client.create(paymentCreateRequest);
 
-            // 5. SALVA O ID DO PAGAMENTO NO PEDIDO (CRUCIAL PARA O WEBHOOK)
+            // 5. Salva o ID do pagamento no pedido
             pedido.setPagamentoIdExterno(payment.getId());
             pedidoRepository.save(pedido);
 
@@ -71,7 +75,6 @@ public class PixPayloadService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            // Retorna null para o controller tratar (ou lance uma exceção personalizada)
             return null;
         }
     }
