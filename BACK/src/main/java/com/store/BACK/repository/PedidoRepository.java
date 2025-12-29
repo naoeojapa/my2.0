@@ -14,8 +14,10 @@ import java.util.Optional;
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
-    // Consulta customizada para trazer os itens e produtos junto com o pedido
-    // Evita o problema de "LazyInitializationException" ou dados faltando
+    // --- MÉTODO NOVO QUE FALTAVA ---
+    Pedido findByPagamentoIdExterno(Long pagamentoIdExterno);
+    // -------------------------------
+
     @Query("SELECT p FROM Pedido p JOIN FETCH p.itens i JOIN FETCH i.produto WHERE p.usuario.id = :usuarioId")
     List<Pedido> findByUsuarioId(@Param("usuarioId") Long usuarioId);
 

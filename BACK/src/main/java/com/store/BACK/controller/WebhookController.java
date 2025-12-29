@@ -48,10 +48,10 @@ public class WebhookController {
                 Payment payment = client.get(paymentId);
 
                 if (payment != null && "approved".equals(payment.getStatus())) {
-                    // Busca pelo ID externo salvo
-                    Pedido pedido = pedidoRepository.findByPagamentoIdExterno(String.valueOf(paymentId));
+                    // CORREÇÃO: Passa o ID como Long direto, sem converter para String
+                    Pedido pedido = pedidoRepository.findByPagamentoIdExterno(paymentId);
                     
-                    // Fallback: Tenta achar pelo ID na descrição
+                    // Fallback: Tenta achar pelo ID na descrição se não achar pelo ID externo
                     if (pedido == null && payment.getDescription() != null) {
                         try {
                             String desc = payment.getDescription();
@@ -65,11 +65,13 @@ public class WebhookController {
                         }
                     }
 
-                    // CORREÇÃO AQUI: Usa string "PAGO" em vez de StatusPedido.PAGO
                     if (pedido != null && !"PAGO".equals(pedido.getStatus())) {
-                        
                         // 1. Atualiza Status
                         pedido.setStatus("PAGO");
+                        // Salva o ID externo caso não tenha
+                        if (pedido.getPagamentoIdExterno() == null) {
+                            pedido.setPagamentoIdExterno(paymentId);
+                        }
                         pedidoRepository.save(pedido);
 
                         // 2. Cria aviso
@@ -90,13 +92,17 @@ public class WebhookController {
         try {
             PedidoAviso aviso = new PedidoAviso();
             aviso.setPedido(pedido);
-            aviso.setTitulo("Pagamento Confirmado");
+            // CORREÇÃO: PedidoAviso não tem setTitulo, removemos.
             
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
             String dataFormatada = LocalDateTime.now().format(formatter);
             
-            aviso.setMensagem("O pagamento via PIX foi confirmado automaticamente pelo sistema em " + dataFormatada + ".");
-            aviso.setDataCriacao(LocalDateTime.now());
+            // CORREÇÃO: Incluímos o "título" na mensagem
+            String msg = "Pagamento Confirmado: O pagamento via PIX foi confirmado automaticamente pelo sistema em " + dataFormatada + ".";
+            aviso.setMensagem(msg);
+            
+            // CORREÇÃO: O método correto é setDataAviso, não setDataCriacao
+            aviso.setDataAviso(LocalDateTime.now());
             
             pedidoAvisoRepository.save(aviso);
         } catch (Exception e) {
