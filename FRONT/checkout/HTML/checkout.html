@@ -8,21 +8,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="/FRONT/assets/CSS/base.css">
-    <link rel="stylesheet" href="/FRONT/checkout/CSS/checkout.css">
+    <link rel="stylesheet" href="../../assets/CSS/base.css">
+    <link rel="stylesheet" href="../CSS/checkout.css">
 </head>
 <body>
-    <header class="simple-header">
-        <div class="container">
-            <a href="/index.html" class="logo">Japa<span> Universe</span></a>
-            <div class="secure-badge">
-                <i class="fas fa-lock"></i> Compra 100% Segura
-            </div>
-        </div>
-    </header>
+    <header class="main-header" data-basepath="../.."></header>
     
     <div class="page-wrapper">
         <main class="checkout-container">
+            <h1 class="page-title"> Checkout Seguro</h1>
             
             <form id="checkoutForm" class="checkout-layout">
                 
@@ -41,16 +35,9 @@
                             
                             <div class="form-group">
                                 <label for="cpfDestinatario">CPF (Para Nota Fiscal)</label>
-                                <input type="text" id="cpfDestinatario" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" required>
+                                <input type="text" id="cpfDestinatario" placeholder="000.000.000-00" required>
                             </div>
 
-                            <div class="form-group" style="margin-top: 15px; margin-bottom: 5px;">
-                                <label class="checkbox-container">
-                                    <input type="checkbox" id="confirmaMaioridade" required>
-                                    <span class="checkmark"></span>
-                                    <span class="checkbox-text">Declaro que sou maior de 18 anos.</span>
-                                </label>
-                            </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="email">E-mail</label>
@@ -58,13 +45,13 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="telefone">WhatsApp</label>
-                                    <input type="text" id="telefone" placeholder="(00) 00000-0000" maxlength="15" inputmode="numeric" required>
+                                    <input type="text" id="telefone" placeholder="(00) 00000-0000" required>
                                 </div>
                             </div>
                             
                             <div class="form-group">
                                 <label for="confirmacaoTelefone">Confirmar WhatsApp</label>
-                                <input type="text" id="confirmacaoTelefone" placeholder="Repita o número" maxlength="15" inputmode="numeric" required>
+                                <input type="text" id="confirmacaoTelefone" placeholder="Repita o número" required>
                                 <div id="phone-match-message" class="validation-message"></div>
                             </div>
                         </div>
@@ -217,8 +204,8 @@
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="/FRONT/assets/js/header.js"></script>
-    <script src="/FRONT/assets/js/cart-utils.js"></script> 
-    <script src="/FRONT/checkout/js/checkout.js"></script>
+    <script src="../../assets/js/header.js"></script>
+    <script src="../../assets/js/cart-utils.js"></script> 
+    <script src="../js/checkout.js"></script>
 </body>
 </html>
