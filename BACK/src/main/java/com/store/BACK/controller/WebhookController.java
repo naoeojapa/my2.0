@@ -5,7 +5,6 @@ import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.resources.payment.Payment;
 import com.store.BACK.model.Pedido;
 import com.store.BACK.model.PedidoAviso; // IMPORTANTE
-import com.store.BACK.model.StatusPedido;
 import com.store.BACK.repository.PedidoRepository;
 import com.store.BACK.repository.PedidoAvisoRepository; // IMPORTANTE
 import org.springframework.beans.factory.annotation.Value;
@@ -71,9 +70,8 @@ public class WebhookController {
                         }
                     }
 
-                    if (pedido != null && pedido.getStatus() != StatusPedido.PAGO) {
-                        // 1. Atualiza Status
-                        pedido.setStatus(StatusPedido.PAGO);
+                    if (pedido != null && !"PAGO".equals(pedido.getStatus())) {
+                        pedido.setStatus("PAGO");
                         pedidoRepository.save(pedido);
 
                         // 2. CRIA A ATUALIZAÇÃO AUTOMÁTICA (AQUI ESTÁ A MÁGICA)
