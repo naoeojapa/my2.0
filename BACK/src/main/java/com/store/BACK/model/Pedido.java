@@ -34,7 +34,7 @@ public class Pedido {
 
     // NOVO CAMPO: ID do pagamento no Mercado Pago
     @Column(name = "pagamento_id_externo")
-    private Long pagamentoIdExterno;
+    private String pagamentoIdExterno;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "endereco_id", nullable = false)

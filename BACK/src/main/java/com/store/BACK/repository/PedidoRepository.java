@@ -14,8 +14,6 @@ import java.util.Optional;
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
-    // Consulta customizada para trazer os itens e produtos junto com o pedido
-    // Evita o problema de "LazyInitializationException" ou dados faltando
     @Query("SELECT p FROM Pedido p JOIN FETCH p.itens i JOIN FETCH i.produto WHERE p.usuario.id = :usuarioId")
     List<Pedido> findByUsuarioId(@Param("usuarioId") Long usuarioId);
 
@@ -31,7 +29,8 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     @Query("SELECT p.status, COUNT(p) FROM Pedido p GROUP BY p.status")
     List<Object[]> countByStatus();
 
-    // --- NOVO MÉTODO (Necessário para o Webhook funcionar) ---
-    // Isso resolve o erro: cannot find symbol method findByPagamentoIdExterno
-    Pedido findByPagamentoIdExterno(String pagamentoIdExterno);
+    // --- CORREÇÃO AQUI: Mudando de String para Long (ou o tipo que está na Entidade Pedido) ---
+    // Se na classe Pedido o campo 'pagamentoIdExterno' é String, mantenha String.
+    // Se for Long, mude para Long. O erro diz que o banco espera Long.
+    Pedido findByPagamentoIdExterno(String pagamentoIdExterno); 
 }
