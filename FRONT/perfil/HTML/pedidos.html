@@ -67,6 +67,21 @@
         </div>
     </div>
 
+    <div id="confirmation-modal" class="modal-overlay" style="z-index: 10001;">
+        <div class="modal-content confirmation-box">
+            <div class="confirmation-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3>Cancelar Pedido?</h3>
+            <p>Você tem certeza que deseja cancelar e excluir este pedido pendente? <br><strong>Esta ação não pode ser desfeita.</strong></p>
+            
+            <div class="confirmation-actions">
+                <button class="btn btn-secondary close-confirm-btn">Não, Voltar</button>
+                <button id="confirm-cancel-btn" class="btn btn-danger">Sim, Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../../../FRONT/assets/js/header.js"></script>
     <script src="../js/pedidos.js"></script>

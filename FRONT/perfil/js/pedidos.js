@@ -1,48 +1,101 @@
 document.addEventListener('DOMContentLoaded', () => {
     const ordersContainer = document.getElementById('orders-container');
-    // Mantém o token para autenticação
     const token = localStorage.getItem('jwtToken');
     
-    // Elementos do DOM
+    // Elementos do DOM - Modais Antigos
     const detailsModal = document.getElementById('details-modal');
     const detailsModalBody = document.getElementById('details-modal-body');
     const updatesModal = document.getElementById('updates-modal');
     const updatesModalBody = document.getElementById('updates-modal-body');
     const imageLightboxModal = document.getElementById('image-lightbox-modal');
     const lightboxImage = document.getElementById('lightbox-image');
-    const closeButtons = document.querySelectorAll('.close-modal-btn');
+    
+    // Elementos do DOM - Novo Modal de Confirmação
+    const confirmModal = document.getElementById('confirmation-modal');
+    const confirmBtn = document.getElementById('confirm-cancel-btn');
+    const closeConfirmBtns = document.querySelectorAll('.close-confirm-btn'); // Botão "Não"
+    const closeButtons = document.querySelectorAll('.close-modal-btn'); // Botões "X" dos outros modais
 
-    // --- CORREÇÃO PRINCIPAL: URL Base Inteligente (Sem barra no final) ---
+    let orderIdToCancel = null; // Variável para guardar qual ID vamos deletar
+
     const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
         ? 'http://localhost:8080'
         : 'https://back-production-e565.up.railway.app';
 
-    // Variável para armazenar pedidos carregados
     let currentOrders = [];
 
-    // Formatação de texto (quebra de linha)
+    // --- FUNÇÕES AUXILIARES ---
     const formatMessage = (text) => {
         if (!text) return '';
         return text.replace(/\n/g, '<br>');
     };
 
-    // Função auxiliar para montar URL de imagem corretamente
     const getImageUrl = (path) => {
         if (!path) return null;
         if (path.startsWith('http')) return path;
-        // Garante que não tenha barra dupla ou falta de barra
         const cleanPath = path.startsWith('/') ? path.substring(1) : path;
         return `${BASE_URL}/${cleanPath}`;
     };
 
-    // --- ABRIR MODAL DE DETALHES (ATUALIZADO) ---
+    // --- FUNÇÃO ABRIR CONFIRMAÇÃO DE CANCELAMENTO ---
+    const askCancelOrder = (id) => {
+        orderIdToCancel = id;
+        confirmModal.classList.add('active');
+    };
+
+    // --- FUNÇÃO EXECUTAR CANCELAMENTO ---
+    const executeCancellation = async () => {
+        if (!orderIdToCancel) return;
+
+        // Botão visual carregando
+        const originalText = confirmBtn.innerText;
+        confirmBtn.innerText = 'Cancelando...';
+        confirmBtn.disabled = true;
+
+        try {
+            await axios.delete(`${BASE_URL}/api/pedidos/${orderIdToCancel}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            // Fecha modal
+            confirmModal.classList.remove('active');
+
+            // Feedback Visual no Card
+            const card = document.querySelector(`.order-card[data-order-id="${orderIdToCancel}"]`);
+            if(card) {
+                card.innerHTML = `
+                    <div class="deleted-msg" style="padding:40px; color:#ff4444;">
+                        <i class="fas fa-check-circle" style="font-size:2rem; margin-bottom:10px;"></i><br>
+                        Pedido Cancelado com Sucesso
+                    </div>
+                `;
+                setTimeout(() => {
+                    fetchOrders(); // Recarrega a lista
+                }, 1500);
+            } else {
+                fetchOrders();
+            }
+
+        } catch (error) {
+            console.error(error);
+            // Fecha o modal de confirmação mesmo com erro, para mostrar o alert se necessário
+            confirmModal.classList.remove('active');
+            alert('Erro ao cancelar o pedido. Tente novamente.');
+        } finally {
+            // Restaura botão e reseta variável
+            confirmBtn.innerText = originalText;
+            confirmBtn.disabled = false;
+            orderIdToCancel = null;
+        }
+    };
+
+    // --- ABRIR MODAL DE DETALHES ---
     const openDetailsModal = (orderId) => {
         const order = currentOrders.find(o => o.id == orderId);
         if (!order) return;
 
         const formattedDate = new Date(order.dataPedido).toLocaleString('pt-BR');
         
-        // Tratamento de endereço seguro
         let enderecoCompleto = 'Endereço não informado';
         if (order.enderecoDeEntrega) {
             const end = order.enderecoDeEntrega;
@@ -51,7 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 CEP: ${end.cep}`;
         }
 
-        // Lógica para mostrar Preferências de Envio
         const temCaixa = order.comCaixa 
             ? '<span style="color:var(--primary); font-weight:bold;">Sim (+5%)</span>' 
             : 'Não (Padrão)';
@@ -85,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="modal-section">
                 <h4>Itens do Pedido</h4>
                 ${order.itens.map(item => {
-                    // Correção da Imagem usando a função auxiliar
                     const imagePath = item.produto && item.produto.imagemUrl ? getImageUrl(item.produto.imagemUrl) : null;
                     return `
                     <div class="order-item-modal">
@@ -112,7 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
             updatesModalBody.innerHTML = '<p>Carregando atualizações...</p>';
             updatesModal.classList.add('active');
 
-            // CORREÇÃO: Usa BASE_URL
             const response = await axios.get(`${BASE_URL}/api/pedidos/${orderId}/avisos`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -130,12 +180,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 `).join('');
             }
 
-            // CORREÇÃO: Marca como lido usando BASE_URL
             await axios.post(`${BASE_URL}/api/pedidos/${orderId}/avisos/mark-as-read`, {}, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
-            // Remove badge visualmente
             const orderCard = ordersContainer.querySelector(`.order-card[data-order-id='${orderId}']`);
             if (orderCard) {
                 const badge = orderCard.querySelector('.notification-badge');
@@ -151,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- CHECAR AVISOS NÃO LIDOS ---
     const checkUnreadAvisos = async (orderId) => {
         try {
-            // CORREÇÃO: Usa BASE_URL
             const response = await axios.get(`${BASE_URL}/api/pedidos/${orderId}/avisos`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -161,35 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const badge = document.querySelector(`.order-card[data-order-id='${orderId}'] .notification-badge`);
                 if (badge) badge.classList.remove('hidden');
             }
-        } catch (e) { /* Silêncio em erro de check */ }
-    };
-
-    // --- FUNÇÃO CANCELAR PEDIDO (NOVO) ---
-    const cancelarPedido = async (id) => {
-        if(!confirm('Tem certeza que deseja cancelar e excluir este pedido pendente? Esta ação não pode ser desfeita.')) return;
-
-        try {
-            // Chama endpoint DELETE
-            await axios.delete(`${BASE_URL}/api/pedidos/${id}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            
-            // Feedback Visual
-            const card = document.querySelector(`.order-card[data-order-id="${id}"]`);
-            if(card) {
-                card.innerHTML = '<div class="deleted-msg"><i class="fas fa-check"></i> Pedido Cancelado com Sucesso</div>';
-                setTimeout(() => {
-                    // Recarrega a lista
-                    fetchOrders();
-                }, 1500);
-            } else {
-                fetchOrders();
-            }
-
-        } catch (error) {
-            console.error(error);
-            alert('Erro ao cancelar o pedido. Tente novamente.');
-        }
+        } catch (e) { /* Silêncio */ }
     };
 
     // --- BUSCAR PEDIDOS ---
@@ -201,11 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ordersContainer.innerHTML = '<p>Carregando pedidos...</p>';
 
         try {
-            // CORREÇÃO: Usa BASE_URL
             const response = await axios.get(`${BASE_URL}/api/pedidos`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            // Ordena Recente -> Antigo
             const sorted = response.data.sort((a,b) => new Date(b.dataPedido) - new Date(a.dataPedido));
             renderOrders(sorted);
         } catch (error) {
@@ -214,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- RENDERIZAR LISTA DE PEDIDOS ---
+    // --- RENDERIZAR PEDIDOS ---
     const renderOrders = async (orders) => {
         if (!orders || orders.length === 0) {
             ordersContainer.innerHTML = '<p>Você ainda não fez nenhum pedido.</p>';
@@ -228,7 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const formattedDate = new Date(order.dataPedido).toLocaleDateString('pt-BR');
             const formattedTotal = order.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-            // --- NOVO: Botões para Pendentes ---
             let actionButtons = '';
             if (order.status === 'PENDENTE') {
                 actionButtons = `
@@ -255,7 +271,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="order-body">
                     ${order.itens ? order.itens.map(item => {
-                        // Correção da Imagem
                         const imgUrl = item.produto && item.produto.imagemUrl ? getImageUrl(item.produto.imagemUrl) : null;
                         return `
                         <div class="order-item">
@@ -281,20 +296,41 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `}).join('');
 
-        // Checa notificações para cada pedido
         orders.forEach(order => checkUnreadAvisos(order.id));
     };
 
-    // Listeners de Clique (Delegação)
+    // --- EVENT LISTENERS ---
+
+    // Listener para o botão de confirmação "Sim, Cancelar"
+    confirmBtn.addEventListener('click', executeCancellation);
+
+    // Listener para os botões "Não" do modal de confirmação
+    closeConfirmBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            confirmModal.classList.remove('active');
+            orderIdToCancel = null;
+        });
+    });
+
+    // Fechar modal de confirmação clicando fora
+    confirmModal.addEventListener('click', (e) => {
+        if (e.target === confirmModal) {
+            confirmModal.classList.remove('active');
+            orderIdToCancel = null;
+        }
+    });
+
+    // Listeners principais (Delegação de Eventos)
     ordersContainer.addEventListener('click', (event) => {
         const target = event.target;
         
-        // NOVO: Clique no botão cancelar
+        // Clique no botão cancelar -> Abre o Modal
         if (target.classList.contains('btn-cancel-order') || target.closest('.btn-cancel-order')) {
             const btn = target.closest('.btn-cancel-order');
             const id = btn.dataset.id;
-            cancelarPedido(id);
-            return; // Para não propagar para o card
+            // Chama a nova função de abrir modal
+            askCancelOrder(id); 
+            return;
         }
 
         const orderCard = target.closest('.order-card');
@@ -310,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Fechar Modais
+    // Fechar Modais Gerais
     closeButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             detailsModal.classList.remove('active');
@@ -319,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Lightbox de imagem
+    // Lightbox
     updatesModalBody.addEventListener('click', (e) => {
         if (e.target.classList.contains('update-image')) {
             lightboxImage.src = e.target.src;
@@ -327,6 +363,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Inicializa
     fetchOrders();
 });
