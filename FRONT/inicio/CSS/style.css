@@ -396,7 +396,6 @@
 
 /* Mobile (até 768px) */
 @media (max-width: 768px) {
-  /* CORREÇÃO GERAL - ELIMINAR BARRA PRETA */
   html, body {
     width: 100% !important;
     max-width: 100% !important;
@@ -416,7 +415,7 @@
     margin: 0 auto !important;
   }
 
-  /* --- HERO SECTION MOBILE - CORRIGIDA --- */
+  /* --- HERO SECTION MOBILE --- */
   .hero {
     height: 100vh;
     min-height: 100vh;
@@ -461,7 +460,6 @@
     width: 100%;
   }
 
-  /* Background dominando toda a tela SEM BARRAS PRETAS */
   .hero-background {
     display: block !important;
     position: absolute;
@@ -500,7 +498,7 @@
 
   .hero-socials {
     position: absolute;
-    bottom: 85px;  /* Alterado para um valor maior para subir os ícones */
+    bottom: 85px;  
     left: 1.5rem;
     z-index: 3;
     display: flex;
@@ -508,7 +506,7 @@
     gap: var(--space-md);
   }
 
-  /* --- SEÇÕES SECUNDÁRIAS - CORRIGIDAS --- */
+  /* --- SEÇÕES SECUNDÁRIAS --- */
   .featured-sneaker {
     padding: var(--space-xl) 0;
     width: 100%;
@@ -576,7 +574,6 @@
   }
 }
 
-/* Mobile Pequeno (até 480px) */
 @media (max-width: 480px) {
   .hero {
     height: 100vh;
@@ -607,7 +604,6 @@
   }
 }
 
-/* iPhone XR específico - 414px width */
 @media (max-width: 414px) {
   .hero-content {
     padding-left: 1rem;
@@ -624,7 +620,6 @@
   }
 }
 
-/* Tablet (769px a 1024px) */
 @media (min-width: 769px) {
   .hero {
     height: 100vh;
@@ -675,7 +670,7 @@
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     width: 90%;
-    max-width: 400px; /* Padrão Mobile */
+    max-width: 400px;
     position: relative;
     color: var(--text-primary);
     animation: fadeInScale 0.3s ease-out;
@@ -783,101 +778,78 @@
     }
 }
 
-/* ==========================================================
-   NOVA SEÇÃO: MELHORIA DE LAYOUT MODAL PARA DESKTOP (PC)
-   ========================================================== */
+/* ========================================================================
+   MODAL DE SELEÇÃO DE TAMANHO (DESKTOP) - LAYOUT "SPLIT" (DIVIDIDO)
+   ======================================================================== */
 @media (min-width: 1024px) {
-    /* 1. Transforma o container pequeno em um Grid Largo */
+    
+    /* 1. Transforma o container em Grid de 2 colunas */
     .size-modal-content {
-        max-width: 950px; /* Bem mais largo */
+        max-width: 900px; /* Aumenta largura total */
         width: 90%;
         display: grid;
-        grid-template-columns: 45% 55%; /* 45% Imagem - 55% Conteúdo */
-        gap: 0;
-        padding: 0; /* Remove padding interno para imagem encostar na borda */
-        overflow: hidden; /* Garante bordas arredondadas na imagem */
+        grid-template-columns: 45% 55%; /* Coluna Esq (IMG) / Coluna Dir (INFO) */
+        grid-template-rows: auto 1fr auto; /* Linhas automáticas */
+        gap: 0; 
+        padding: 0; /* Remove padding interno para a imagem colar nas bordas */
+        overflow: hidden; /* Garante que a imagem não saia das bordas arredondadas */
+        align-items: center; /* Centraliza verticalmente o conteúdo */
     }
 
-    /* 2. Área da Imagem (Esquerda) */
-    .modal-left, 
-    .product-image-container { 
-        background-color: #f8f9fa; /* Fundo claro para contraste */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        min-height: 500px; /* Altura mínima grande */
-        padding: 40px;
-        position: relative;
-    }
-
-    /* 3. Estilo da Imagem em si */
-    .modal-left img, 
-    .product-image-container img {
+    /* * 2. FORÇA A IMAGEM PARA A COLUNA ESQUERDA (Ocupando toda a altura)
+     * Como não sei se é <img> ou <div>, tento pegar os dois casos comuns.
+     */
+    .size-modal-content > img,
+    .size-modal-content .modal-image-wrapper { 
+        grid-column: 1 / 2; /* Fica na primeira coluna */
+        grid-row: 1 / -1;   /* Ocupa da primeira até a última linha (altura total) */
         width: 100%;
-        height: auto;
-        max-height: 400px;
-        object-fit: contain;
-        filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15));
-        transition: transform 0.4s ease;
+        height: 100%;
+        min-height: 450px;  /* Altura mínima imponente */
+        object-fit: contain; /* Mostra o tênis inteiro */
+        background-color: #f4f4f4; /* Fundo cinza claro para destaque premium */
+        padding: 40px; /* Espaço interno para o tênis respirar */
     }
 
-    .modal-left img:hover,
-    .product-image-container img:hover {
-        transform: scale(1.1) rotate(-2deg);
-    }
-
-    /* 4. Área de Informações (Direita) - Onde ficam os botões e texto */
-    .modal-right, 
-    .product-details,
-    /* Caso não tenha divs separadas, o CSS tenta ajustar elementos soltos: */
+    /* * 3. FORÇA TODO O RESTO (TEXTO E BOTÕES) PARA A COLUNA DIREITA 
+     */
     .size-modal-content > h3,
     .size-modal-content > .size-options-container,
     .size-modal-content > #addToCartModalBtn,
-    .size-modal-content > .modal-error {
-        background-color: var(--background); /* Garante fundo */
+    .size-modal-content > .modal-error,
+    .size-modal-content > p {
+        grid-column: 2 / 3; /* Força todos esses para a segunda coluna */
+        width: 85%; /* Largura reduzida para não colar nas bordas */
+        margin-left: auto;
+        margin-right: auto;
     }
 
-    /* Wrapper para o conteúdo da direita (caso você adicione uma div .modal-right) */
-    .modal-right {
-        padding: 50px 40px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    /* Ajustes específicos se os elementos estiverem soltos no grid */
+    /* Ajustes finos de espaçamento no lado direito */
     .size-modal-content > h3 {
-        grid-column: 2; /* Joga pra coluna da direita */
+        font-size: 2.2rem;
         margin-top: 40px;
-        font-size: 2rem;
+        margin-bottom: 20px;
+        text-align: left; /* Título alinhado à esquerda fica mais moderno no PC */
     }
 
-    .size-modal-content > .size-options-container {
-        grid-column: 2;
-        padding: 0 40px;
-        justify-content: flex-start; /* Alinha tamanhos à esquerda */
+    .size-options-container {
+        justify-content: flex-start; /* Alinha os tamanhos à esquerda */
+        margin-bottom: 30px;
     }
 
-    .size-modal-content > #addToCartModalBtn {
-        grid-column: 2;
-        width: calc(100% - 80px); /* Ajuste de margem */
-        margin: 0 40px 40px;
+    #addToCartModalBtn {
+        margin-bottom: 40px; /* Espaço no final */
     }
 
-    .size-modal-content > .modal-error {
-        grid-column: 2;
-    }
-
-    /* Reposiciona o botão de fechar */
+    /* Ajuste do botão de fechar (X) */
     .size-modal-content .close-button {
         top: 20px;
         right: 20px;
-        color: #333; /* Escuro para fundo branco */
-        background: rgba(0,0,0,0.05);
-        border-radius: 50%;
+        color: #333; /* Cor escura para contrastar com fundo branco */
+        background: rgba(0,0,0,0.05); /* Fundo sutil */
         width: 40px;
         height: 40px;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
