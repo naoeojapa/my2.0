@@ -798,7 +798,7 @@
    ========================================= */
 
 .confirmation-box {
-    max-width: 400px; /* Mais estreito que os outros modais */
+    max-width: 200px; /* Mais estreito que os outros modais */
     text-align: center;
     padding: var(--space-xl);
     border: 1px solid rgba(255, 68, 68, 0.3); /* Borda avermelhada sutil */
