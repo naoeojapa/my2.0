@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento - Japa Universe</title>
+    
+    <link rel="stylesheet" href="/FRONT/assets/CSS/base.css">
+    <link rel="stylesheet" href="/FRONT/pagamento/CSS/pagamento.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+    <header class="simple-header">
+        <a href="/index.html" class="logo">Japa<span> Universe</span></a>
+    </header>
+
+    <main class="payment-container">
+        
+        <div id="payment-pending" class="payment-box">
+            
+            <div class="payment-header">
+                <div class="timer">
+                    <i class="far fa-clock"></i> Aguardando pagamento...
+                </div>
+                <h2>Pagamento via PIX</h2>
+                <p>Escaneie o QR Code ou use o Copia e Cola.</p>
+            </div>
+
+            <div class="payment-content">
+                <div class="col-left">
+                    <div class="qr-wrapper">
+                        <canvas id="qr-code-canvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="col-right">
+                    <div class="copy-paste-section">
+                        <label>Pix Copia e Cola:</label>
+                        <div class="input-group">
+                            <input type="text" id="pix-code-input" readonly>
+                            <button id="btn-copy" onclick="copiarCodigo()">
+                                <i class="far fa-copy"></i>
+                            </button>
+                        </div>
+                        <span id="copy-msg" class="fade-msg">Copiado com sucesso!</span>
+                    </div>
+
+                    <div class="total-display">
+                        Total: <span id="valor-total">R$ 0,00</span>
+                    </div>
+
+                    <div class="instructions">
+                        <p><i class="fas fa-mobile-alt"></i> Abra o app do seu banco</p>
+                        <p><i class="fas fa-qrcode"></i> Escolha Pix > Pagar com QR Code</p>
+                        <p><i class="fas fa-check"></i> Aguarde a confirmação aqui</p>
+                    </div>
+                    
+                    <div class="actions">
+                        <a href="/FRONT/perfil/HTML/pedidos.html" class="btn-secondary">Meus Pedidos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="payment-success" class="payment-box hidden success-box">
+            <div class="success-content">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>Pagamento Confirmado!</h2>
+                <p>Seu pedido já está sendo processado pela nossa equipe.</p>
+                <div class="success-actions">
+                    <a href="/FRONT/perfil/HTML/pedidos.html" class="btn-primary">Acompanhar Entrega</a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/FRONT/pagamento/js/pagamento.js"></script>
+</body>
+</html>
