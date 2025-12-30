@@ -1,5 +1,5 @@
 /* ===================================================
-    CSS/catalogo.css - CATÁLOGO PROFISSIONAL JAPA UNIVERSE (CORRIGIDO)
+    CSS/catalogo.css - CATÁLOGO PROFISSIONAL JAPA UNIVERSE
    =================================================== */
 
 /* ===== VARIÁVEIS ADICIONAIS ===== */
@@ -10,6 +10,9 @@
   --info-color: #2196f3;
   --skeleton-color: #2a2a2a;
   --skeleton-highlight: #333;
+  --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-deep: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  --shadow-light: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 /* ===== HERO DO CATÁLOGO ===== */
@@ -504,7 +507,10 @@
   width: 80%;
 }
 
-/* ===== QUICK VIEW MODAL (IMAGENS MAXIMIZADAS) ===== */
+/* ===================================================
+   QUICK VIEW MODAL - LAYOUT PROFISSIONAL REDESENHADO
+   =================================================== */
+
 .quickview-modal-overlay {
   position: fixed;
   top: 0;
@@ -515,11 +521,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1060;
+  z-index: 9999;
   visibility: hidden;
   opacity: 0;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  transition: all 0.4s var(--transition-smooth);
+  backdrop-filter: blur(12px);
   padding: var(--space-md);
 }
 
@@ -530,21 +536,21 @@
 
 .quickview-modal-content {
   background: var(--background);
-  border-radius: 20px;
+  border-radius: 24px;
   max-width: 1200px;
   width: 100%;
   max-height: 90vh;
-  overflow-y: auto;
+  overflow: hidden;
   position: relative;
-  border: 1px solid var(--border-color);
-  animation: modalSlideIn 0.4s ease;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 122, 0, 0.2);
+  animation: modalSlideIn 0.4s var(--transition-smooth);
+  box-shadow: var(--shadow-deep);
 }
 
 @keyframes modalSlideIn {
   from {
     opacity: 0;
-    transform: scale(0.9) translateY(20px);
+    transform: scale(0.95) translateY(30px);
   }
   to {
     opacity: 1;
@@ -554,311 +560,749 @@
 
 .quickview-modal-content .close-button {
   position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-  z-index: 10;
-  width: 45px;
-  height: 45px;
+  top: 24px;
+  right: 24px;
+  z-index: 1000;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  cursor: pointer;
 }
 
 .quickview-modal-content .close-button:hover {
   background: var(--primary);
-  transform: scale(1.1);
+  transform: scale(1.1) rotate(90deg);
+  border-color: var(--primary);
 }
 
 .quickview-content {
   display: grid;
   grid-template-columns: 1fr;
   gap: 0;
-  min-height: auto;
+  height: 100%;
 }
 
-/* Redesign completo da galeria para desktop - fundo elegante com gradiente radial */
+/* ===== LAYOUT PARA DESKTOP ===== */
+@media (min-width: 992px) {
+  .quickview-content {
+    grid-template-columns: 1fr 1fr;
+    height: auto;
+  }
+}
+
+/* ===== GALERIA DE IMAGENS PREMIUM ===== */
 .quickview-gallery {
   position: relative;
-  background: #fff;
-  /* Adicionando borda arredondada no mobile */
-  border-radius: 20px;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+  padding: 40px;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
+}
+
+.quickview-gallery::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  opacity: 0.5;
+}
+
+.quickview-main-image-container {
+  position: relative;
+  width: 100%;
+  height: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  min-height: 400px;
+  perspective: 1000px;
 }
 
-/* Imagem principal muito maior com sombra dramática e hover suave */
 .quickview-main-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain !important;
-  max-height: 500px;
-  filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.4));
-  transition: transform 0.4s ease, filter 0.4s ease;
+  max-width: 100%;
+  max-height: 400px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5));
+  transition: transform 0.5s var(--transition-smooth);
+  transform-style: preserve-3d;
 }
 
-.quickview-main-image:hover {
-  transform: scale(1.05);
-  filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.5));
+.quickview-gallery:hover .quickview-main-image {
+  transform: scale(1.05) rotateY(5deg);
+}
+
+.quickview-image-badge {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: var(--primary);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3);
+  z-index: 2;
 }
 
 .quickview-thumbnails {
-  position: absolute;
-  bottom: var(--space-sm);
-  left: 0;
-  right: 0;
   display: flex;
-  justify-content: center;
-  gap: var(--space-xs);
-  padding: 0 var(--space-sm);
+  gap: 12px;
+  margin-top: 30px;
+  padding: 0 20px;
+  overflow-x: auto;
+  max-width: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) transparent;
+}
+
+.quickview-thumbnails::-webkit-scrollbar {
+  height: 6px;
+}
+
+.quickview-thumbnails::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.quickview-thumbnails::-webkit-scrollbar-thumb {
+  background-color: var(--primary);
+  border-radius: 20px;
 }
 
 .quickview-thumbnail {
-  width: 50px;
-  height: 50px;
-  border-radius: 6px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  flex: 0 0 auto;
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  border: 2px solid transparent;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   object-fit: cover;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
+  background: var(--surface);
+  overflow: hidden;
 }
 
-.quickview-thumbnail:hover,
+.quickview-thumbnail:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+
 .quickview-thumbnail.active {
-  border-color: rgba(255, 255, 255, 0.8);
-  transform: scale(1.05);
-  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(255, 122, 0, 0.4);
 }
 
+.quickview-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ===== DETALHES DO PRODUTO ===== */
 .quickview-details {
-  padding: var(--space-lg);
+  padding: 40px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-md);
+  overflow-y: auto;
+  max-height: 500px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) transparent;
+}
+
+.quickview-details::-webkit-scrollbar {
+  width: 6px;
+}
+
+.quickview-details::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.quickview-details::-webkit-scrollbar-thumb {
+  background-color: var(--primary);
+  border-radius: 20px;
 }
 
 .quickview-brand {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--text-secondary);
+  font-size: 0.85rem;
+  color: var(--primary);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   font-weight: 600;
+  margin-bottom: 5px;
 }
 
 .quickview-title {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: 900;
   color: var(--text-primary);
   line-height: 1.2;
-  margin: 0;
+  margin: 0 0 15px 0;
+  font-family: var(--font-heading);
 }
 
-.quickview-price {
+.quickview-rating {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  margin: var(--space-xs) 0;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.stars {
+  color: #ffd700;
+  font-size: 1.1rem;
+}
+
+.rating-count {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.quickview-price-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 20px 0;
+  padding: 20px;
+  background: rgba(255, 122, 0, 0.05);
+  border-radius: 12px;
+  border-left: 3px solid var(--primary);
 }
 
 .quickview-current-price {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 2.2rem;
+  font-weight: 900;
   color: var(--primary);
+  line-height: 1;
 }
 
 .quickview-original-price {
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: var(--text-secondary);
   text-decoration: line-through;
+  font-weight: 500;
 }
 
 .quickview-discount {
   background: var(--error-color);
   color: white;
-  padding: 0.3rem 0.6rem;
-  border-radius: 4px;
-  font-size: 0.7rem;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
   font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 .quickview-description {
   color: var(--text-secondary);
-  line-height: 1.5;
-  margin: var(--space-sm) 0;
+  line-height: 1.7;
+  font-size: 1rem;
+  margin: 20px 0;
+  padding: 20px;
+  background: var(--surface);
+  border-radius: 12px;
+  border-left: 3px solid var(--border-color);
+}
+
+.quickview-highlights {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.quickview-highlight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary);
   font-size: 0.9rem;
+}
+
+.quickview-highlight i {
+  color: var(--primary);
+  font-size: 1.2rem;
 }
 
 .quickview-shipping {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 12px;
+  background: rgba(0, 166, 90, 0.1);
   color: var(--success-color);
+  padding: 15px;
+  border-radius: 12px;
   font-weight: 600;
-  margin: var(--space-sm) 0;
-  font-size: 0.9rem;
+  margin: 15px 0;
+  border-left: 3px solid var(--success-color);
 }
 
 .quickview-shipping i {
-  font-size: 1rem;
+  font-size: 1.3rem;
 }
 
+/* ===== SELEÇÃO DE TAMANHO ===== */
 .quickview-size-section {
-  margin: var(--space-md) 0;
+  margin: 25px 0;
 }
 
 .quickview-size-title {
-  font-weight: 600;
-  margin-bottom: var(--space-sm);
+  font-weight: 700;
+  margin-bottom: 15px;
   color: var(--text-primary);
-  font-size: 0.9rem;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .quickview-size-options {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
-  gap: 0.6rem;
-  margin-bottom: var(--space-sm);
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
 .quickview-size-option {
   background: var(--surface);
   border: 2px solid var(--border-color);
   color: var(--text-primary);
-  padding: 0.6rem 0.4rem;
-  border-radius: 6px;
+  padding: 12px 5px;
+  border-radius: 10px;
   text-align: center;
   cursor: pointer;
-  font-weight: 600;
-  font-size: 0.85rem;
-  transition: all 0.2s ease;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.quickview-size-option::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.6s ease;
 }
 
 .quickview-size-option:hover {
   border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 122, 0, 0.2);
 }
+
+.quickview-size-option:hover::before {
+  left: 100%;
+}
+
 .quickview-size-option.selected {
   background: var(--primary);
   border-color: var(--primary);
   color: white;
+  box-shadow: 0 4px 15px rgba(255, 122, 0, 0.4);
 }
+
 .quickview-size-option.disabled {
   opacity: 0.4;
   cursor: not-allowed;
   text-decoration: line-through;
 }
+
+.quickview-size-option.disabled:hover {
+  transform: none;
+  border-color: var(--border-color);
+  box-shadow: none;
+}
+
+/* ===== AÇÕES DO PRODUTO ===== */
 .quickview-actions {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  margin-top: auto;
-}
-.quickview-add-to-cart {
-  flex: 1;
-  justify-content: center;
-  padding: 1rem;
-  font-size: 1rem;
-  font-weight: 600;
-}
-.quickview-wishlist {
-  display: none;
-}
-.quickview-features {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-sm);
-  margin-top: var(--space-md);
-  padding-top: var(--space-md);
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 30px;
+  padding-top: 25px;
   border-top: 1px solid var(--border-color);
 }
-.quickview-feature {
+
+.quickview-add-to-cart {
+  grid-column: 1 / -1;
+  justify-content: center;
+  padding: 18px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+  border: none;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.quickview-add-to-cart::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.quickview-add-to-cart:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 122, 0, 0.4);
+}
+
+.quickview-add-to-cart:hover::before {
+  left: 100%;
+}
+
+.quickview-wishlist {
+  background: transparent;
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 15px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  color: var(--text-secondary);
-  font-size: 0.8rem;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
-.quickview-feature i {
+
+.quickview-wishlist:hover {
+  border-color: var(--primary);
   color: var(--primary);
-  font-size: 1rem;
+  background: rgba(255, 122, 0, 0.05);
 }
-.quickview-error {
-  text-align: center;
-  padding: var(--space-xl);
+
+.quickview-wishlist.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.quickview-payment-info {
+  grid-column: 1 / -1;
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 10px;
+  font-size: 0.85rem;
   color: var(--text-secondary);
+  border-left: 3px solid var(--primary);
 }
-.quickview-error i {
-  font-size: 2.5rem;
-  margin-bottom: var(--space-sm);
-  color: var(--error-color);
+
+.quickview-payment-info strong {
+  color: var(--text-primary);
 }
+
+/* ===== ESTADOS DE CARREGAMENTO E ERRO ===== */
 .quickview-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--space-xl);
-  gap: var(--space-sm);
+  padding: 60px 40px;
+  gap: 25px;
+  text-align: center;
 }
+
+.quickview-loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--border-color);
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.quickview-error {
+  text-align: center;
+  padding: 60px 40px;
+  color: var(--text-secondary);
+}
+
+.quickview-error i {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: var(--error-color);
+}
+
+.quickview-error h3 {
+  color: var(--text-primary);
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+/* ===== SKELETON LOADING PARA QUICK VIEW ===== */
 .quickview-skeleton {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: var(--space-lg);
   padding: var(--space-lg);
 }
+
+@media (min-width: 992px) {
+  .quickview-skeleton {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .quickview-skeleton-image {
-  height: 250px;
+  height: 400px;
   background: var(--skeleton-color);
-  border-radius: 12px;
+  border-radius: 16px;
   position: relative;
   overflow: hidden;
 }
+
 .quickview-skeleton-details {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-md);
+  padding: var(--space-lg);
 }
+
 .quickview-skeleton-text {
-  height: 1.1rem;
+  height: 1.2rem;
   background: var(--skeleton-color);
-  border-radius: 6px;
+  border-radius: 8px;
   position: relative;
   overflow: hidden;
 }
+
 .quickview-skeleton-text.short {
-  width: 40%;
+  width: 30%;
 }
+
 .quickview-skeleton-text.medium {
-  width: 70%;
+  width: 60%;
 }
+
 .quickview-skeleton-text.long {
-  width: 100%;
+  width: 90%;
 }
+
 .quickview-skeleton-price {
-  height: 2rem;
-  width: 50%;
+  height: 2.5rem;
+  width: 40%;
   background: var(--skeleton-color);
-  border-radius: 8px;
-  margin: var(--space-sm) 0;
+  border-radius: 10px;
+  margin: var(--space-md) 0;
 }
+
 .quickview-skeleton-button {
-  height: 3rem;
+  height: 3.5rem;
   background: var(--skeleton-color);
   border-radius: 12px;
   margin-top: auto;
 }
+
+/* ===== RESPONSIVIDADE ===== */
+
+/* Tablet */
+@media (max-width: 991px) {
+  .quickview-modal-content {
+    max-width: 90%;
+    max-height: 85vh;
+  }
+  
+  .quickview-gallery {
+    min-height: 400px;
+    padding: 30px;
+  }
+  
+  .quickview-main-image-container {
+    height: 350px;
+  }
+  
+  .quickview-details {
+    max-height: 400px;
+    padding: 30px;
+  }
+  
+  .quickview-title {
+    font-size: 1.8rem;
+  }
+  
+  .quickview-current-price {
+    font-size: 1.8rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .quickview-modal-content {
+    max-width: 95%;
+    max-height: 80vh;
+    border-radius: 20px;
+  }
+  
+  .quickview-gallery {
+    min-height: 300px;
+    padding: 20px;
+  }
+  
+  .quickview-main-image-container {
+    height: 250px;
+  }
+  
+  .quickview-main-image {
+    max-height: 250px;
+  }
+  
+  .quickview-thumbnails {
+    margin-top: 20px;
+    padding: 0 10px;
+  }
+  
+  .quickview-thumbnail {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .quickview-details {
+    padding: 25px;
+    max-height: 350px;
+  }
+  
+  .quickview-title {
+    font-size: 1.5rem;
+  }
+  
+  .quickview-current-price {
+    font-size: 1.6rem;
+  }
+  
+  .quickview-highlights {
+    grid-template-columns: 1fr;
+  }
+  
+  .quickview-actions {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .quickview-add-to-cart {
+    padding: 16px;
+    font-size: 1rem;
+  }
+}
+
+/* Mobile Pequeno */
+@media (max-width: 480px) {
+  .quickview-modal-content {
+    border-radius: 16px;
+  }
+  
+  .quickview-modal-content .close-button {
+    width: 40px;
+    height: 40px;
+    top: 16px;
+    right: 16px;
+  }
+  
+  .quickview-gallery {
+    min-height: 250px;
+    padding: 15px;
+  }
+  
+  .quickview-main-image-container {
+    height: 200px;
+  }
+  
+  .quickview-main-image {
+    max-height: 200px;
+  }
+  
+  .quickview-details {
+    padding: 20px;
+  }
+  
+  .quickview-title {
+    font-size: 1.3rem;
+  }
+  
+  .quickview-current-price {
+    font-size: 1.4rem;
+  }
+  
+  .quickview-size-options {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .quickview-description {
+    font-size: 0.9rem;
+    padding: 15px;
+  }
+}
+
+/* ===== ANIMAÇÕES ADICIONAIS ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.quickview-content {
+  animation: fadeIn 0.3s ease;
+}
+
+.quickview-details > * {
+  animation: slideInRight 0.3s ease forwards;
+  opacity: 0;
+}
+
+.quickview-details > *:nth-child(1) { animation-delay: 0.1s; }
+.quickview-details > *:nth-child(2) { animation-delay: 0.15s; }
+.quickview-details > *:nth-child(3) { animation-delay: 0.2s; }
+.quickview-details > *:nth-child(4) { animation-delay: 0.25s; }
+.quickview-details > *:nth-child(5) { animation-delay: 0.3s; }
+.quickview-details > *:nth-child(6) { animation-delay: 0.35s; }
+.quickview-details > *:nth-child(7) { animation-delay: 0.4s; }
+.quickview-details > *:nth-child(8) { animation-delay: 0.45s; }
 
 /* ===== BOTÃO CARREGAR MAIS ===== */
 .catalog-footer {
@@ -965,17 +1409,8 @@
     padding: 0;
   }
 
-  /* Mobile mantém o layout compacto como está */
-  .quickview-gallery {
-    min-height: 350px;
-    padding: var(--space-md);
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
-    background-image: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%),
-      radial-gradient(ellipse at center, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
-    background-size: cover, 200% 200%;
-    background-position: center center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    border-radius: 20px; /* Adicionando borda arredondada no mobile */
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -983,5 +1418,12 @@
 @media (min-width: 769px) {
   .products-grid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+/* Desktop Grande */
+@media (min-width: 1200px) {
+  .quickview-modal-content {
+    max-width: 1100px;
   }
 }
