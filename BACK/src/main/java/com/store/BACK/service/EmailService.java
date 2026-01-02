@@ -1,25 +1,25 @@
 package com.store.BACK.service;
 
+import com.resend.Resend;
+import com.resend.services.emails.model.SendEmailRequest;
 import com.store.BACK.model.ItemPedido;
 import com.store.BACK.model.Pedido;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.UnsupportedEncodingException;
-import java.time.format.DateTimeFormatter;
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    // Injeta a chave do arquivo application.properties ou variáveis de ambiente
+    @Value("${resend.api.key}")
+    private String resendApiKey;
 
     // Sistema de cores profissionais da marca
     private final String COLOR_PRIMARY = "#ff7a00";
@@ -35,22 +35,20 @@ public class EmailService {
     private final String COLOR_ERROR = "#f56565";
     private final String COLOR_INFO = "#3498db"; // Cor para Pedido Enviado
 
-    // ENDEREÇOS PADRONIZADOS
-    private static final String REMETENTE_TRANSACIONAL = "japauniversestore@gmail.com";
-    private static final String REMETENTE_AUTENTICADO = "japauniversestore@gmail.com";
+    // IMPORTANTE: No Resend (modo gratuito/teste), você deve usar o domínio deles.
+    // Quando você configurar seu domínio próprio no painel do Resend, pode mudar para "contato@japauniverse.com.br"
+    private static final String REMETENTE_PADRAO = "Japa Universe <onboarding@resend.dev>";
 
     public void enviarConfirmacaoPagamento(Pedido pedido) {
         enviarPedidoRecebido(pedido);
     }
 
-    // 1. PEDIDO RECEBIDO (Funciona)
+    // 1. PEDIDO RECEBIDO
     @Async
     @Transactional
     public void enviarPedidoRecebido(Pedido pedido) {
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
+            Resend resend = new Resend(resendApiKey);
             String dataPedido = pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm"));
 
             String itensHtml = buildItensHtml(pedido);
@@ -92,35 +90,30 @@ public class EmailService {
 
                             buildSuporteFooter();
 
-
             String finalHtml = getBaseTemplate(bodyContent, "Pedido Recebido #" + pedido.getId());
 
-            helper.setTo(pedido.getUsuario().getEmail());
-            helper.setSubject("⏳ Pedido Recebido - Aguardando Pagamento Japa Universe #" + pedido.getId());
-            helper.setText(finalHtml, true);
+            SendEmailRequest request = SendEmailRequest.builder()
+                    .from(REMETENTE_PADRAO)
+                    .to(pedido.getUsuario().getEmail())
+                    .subject("⏳ Pedido Recebido - Aguardando Pagamento Japa Universe #" + pedido.getId())
+                    .html(finalHtml)
+                    .build();
 
-            try {
-                helper.setFrom(REMETENTE_TRANSACIONAL, "Japa Universe");
-            } catch (UnsupportedEncodingException e) {
-                helper.setFrom(REMETENTE_TRANSACIONAL);
-            }
+            resend.emails().send(request);
+            System.out.println(">>> E-mail Pedido Recebido enviado para: " + pedido.getUsuario().getEmail());
 
-            mailSender.send(message);
-
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Falha ao enviar e-mail de confirmação de pedido", e);
+            throw new RuntimeException("Falha ao enviar e-mail de confirmação de pedido via Resend", e);
         }
     }
 
-    // 2. PAGAMENTO CONFIRMADO (Funciona)
+    // 2. PAGAMENTO CONFIRMADO
     @Async
     @Transactional
     public void enviarPagamentoConfirmado(Pedido pedido) {
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
+            Resend resend = new Resend(resendApiKey);
             String dataPedido = pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm"));
 
             String itensHtml = buildItensHtml(pedido);
@@ -168,35 +161,30 @@ public class EmailService {
 
                             buildSuporteFooter();
 
-
             String finalHtml = getBaseTemplate(bodyContent, "Pagamento Confirmado #" + pedido.getId());
 
-            helper.setTo(pedido.getUsuario().getEmail());
-            helper.setSubject("✅ Pagamento Confirmado - Japa Universe #" + pedido.getId());
-            helper.setText(finalHtml, true);
+            SendEmailRequest request = SendEmailRequest.builder()
+                    .from(REMETENTE_PADRAO)
+                    .to(pedido.getUsuario().getEmail())
+                    .subject("✅ Pagamento Confirmado - Japa Universe #" + pedido.getId())
+                    .html(finalHtml)
+                    .build();
 
-            try {
-                helper.setFrom(REMETENTE_TRANSACIONAL, "Japa Universe");
-            } catch (UnsupportedEncodingException e) {
-                helper.setFrom(REMETENTE_TRANSACIONAL);
-            }
+            resend.emails().send(request);
+            System.out.println(">>> E-mail Pagamento Confirmado enviado para: " + pedido.getUsuario().getEmail());
 
-            mailSender.send(message);
-
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Falha ao enviar e-mail de confirmação de pagamento", e);
+            throw new RuntimeException("Falha ao enviar e-mail de confirmação de pagamento via Resend", e);
         }
     }
 
-    // 3. PEDIDO ENVIADO (COPIADO E ADAPTADO)
+    // 3. PEDIDO ENVIADO
     @Async
     @Transactional
     public void enviarPedidoEnviado(Pedido pedido) {
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
+            Resend resend = new Resend(resendApiKey);
             String dataPedido = pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm"));
 
             String itensHtml = buildItensHtml(pedido);
@@ -243,32 +231,28 @@ public class EmailService {
 
             String finalHtml = getBaseTemplate(bodyContent, "Pedido Enviado #" + pedido.getId());
 
-            helper.setTo(pedido.getUsuario().getEmail());
-            helper.setSubject("🚚 Seu Pedido Foi Enviado - Japa Universe #" + pedido.getId());
-            helper.setText(finalHtml, true);
+            SendEmailRequest request = SendEmailRequest.builder()
+                    .from(REMETENTE_PADRAO)
+                    .to(pedido.getUsuario().getEmail())
+                    .subject("🚚 Seu Pedido Foi Enviado - Japa Universe #" + pedido.getId())
+                    .html(finalHtml)
+                    .build();
 
-            try {
-                helper.setFrom(REMETENTE_TRANSACIONAL, "Japa Universe");
-            } catch (UnsupportedEncodingException e) {
-                helper.setFrom(REMETENTE_TRANSACIONAL);
-            }
+            resend.emails().send(request);
+            System.out.println(">>> E-mail Pedido Enviado enviado para: " + pedido.getUsuario().getEmail());
 
-            mailSender.send(message);
-
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Falha ao enviar e-mail de pedido enviado", e);
+            throw new RuntimeException("Falha ao enviar e-mail de pedido enviado via Resend", e);
         }
     }
 
-    // 4. PEDIDO ENTREGUE (NOVO - COPIADO E ADAPTADO)
+    // 4. PEDIDO ENTREGUE
     @Async
     @Transactional
     public void enviarPedidoEntregue(Pedido pedido) {
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
+            Resend resend = new Resend(resendApiKey);
             String dataPedido = pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm"));
 
             String itensHtml = buildItensHtml(pedido);
@@ -303,32 +287,28 @@ public class EmailService {
 
             String finalHtml = getBaseTemplate(bodyContent, "Pedido Entregue #" + pedido.getId());
 
-            helper.setTo(pedido.getUsuario().getEmail());
-            helper.setSubject("🎁 Seu Pedido Foi Entregue - Japa Universe #" + pedido.getId());
-            helper.setText(finalHtml, true);
+            SendEmailRequest request = SendEmailRequest.builder()
+                    .from(REMETENTE_PADRAO)
+                    .to(pedido.getUsuario().getEmail())
+                    .subject("🎁 Seu Pedido Foi Entregue - Japa Universe #" + pedido.getId())
+                    .html(finalHtml)
+                    .build();
 
-            try {
-                helper.setFrom(REMETENTE_TRANSACIONAL, "Japa Universe");
-            } catch (UnsupportedEncodingException e) {
-                helper.setFrom(REMETENTE_TRANSACIONAL);
-            }
+            resend.emails().send(request);
+            System.out.println(">>> E-mail Pedido Entregue enviado para: " + pedido.getUsuario().getEmail());
 
-            mailSender.send(message);
-
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Falha ao enviar e-mail de pedido entregue", e);
+            throw new RuntimeException("Falha ao enviar e-mail de pedido entregue via Resend", e);
         }
     }
 
-    // 5. PEDIDO CANCELADO (NOVO - COPIADO E ADAPTADO)
+    // 5. PEDIDO CANCELADO
     @Async
     @Transactional
     public void enviarPedidoCancelado(Pedido pedido) {
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
+            Resend resend = new Resend(resendApiKey);
             String dataPedido = pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm"));
 
             String itensHtml = buildItensHtml(pedido);
@@ -363,31 +343,29 @@ public class EmailService {
 
             String finalHtml = getBaseTemplate(bodyContent, "Pedido Cancelado #" + pedido.getId());
 
-            helper.setTo(pedido.getUsuario().getEmail());
-            helper.setSubject("🚫 Pedido Cancelado - Japa Universe #" + pedido.getId());
-            helper.setText(finalHtml, true);
+            SendEmailRequest request = SendEmailRequest.builder()
+                    .from(REMETENTE_PADRAO)
+                    .to(pedido.getUsuario().getEmail())
+                    .subject("🚫 Pedido Cancelado - Japa Universe #" + pedido.getId())
+                    .html(finalHtml)
+                    .build();
 
-            try {
-                helper.setFrom(REMETENTE_TRANSACIONAL, "Japa Universe");
-            } catch (UnsupportedEncodingException e) {
-                helper.setFrom(REMETENTE_TRANSACIONAL);
-            }
+            resend.emails().send(request);
+            System.out.println(">>> E-mail Pedido Cancelado enviado para: " + pedido.getUsuario().getEmail());
 
-            mailSender.send(message);
-
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Falha ao enviar e-mail de pedido cancelado", e);
+            throw new RuntimeException("Falha ao enviar e-mail de pedido cancelado via Resend", e);
         }
     }
 
-    // --- REDEFINIÇÃO DE SENHA (MANTIDO) ---
+    // --- REDEFINIÇÃO DE SENHA ---
     @Async
     public void sendPasswordResetEmail(String to, String token) {
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
+            Resend resend = new Resend(resendApiKey);
+            
+            // ATENÇÃO: Se estiver em produção, altere este URL para o seu domínio real
             String url = "http://127.0.0.1:5500/FRONT/login/HTML/nova-senha.html?token=" + token;
 
             String bodyContent =
@@ -418,24 +396,23 @@ public class EmailService {
 
             String finalHtml = getBaseTemplate(bodyContent, "Redefinição de Senha");
 
-            helper.setTo(to);
-            helper.setSubject("🔐 Redefinição de Senha - Japa Universe");
-            helper.setText(finalHtml, true);
+            SendEmailRequest request = SendEmailRequest.builder()
+                    .from(REMETENTE_PADRAO)
+                    .to(to)
+                    .subject("🔐 Redefinição de Senha - Japa Universe")
+                    .html(finalHtml)
+                    .build();
 
-            try {
-                helper.setFrom(REMETENTE_AUTENTICADO, "Japa Universe");
-            } catch (UnsupportedEncodingException e) {
-                helper.setFrom(REMETENTE_AUTENTICADO);
-            }
+            resend.emails().send(request);
+            System.out.println(">>> E-mail de Redefinição enviado para: " + to);
 
-            mailSender.send(message);
-        } catch (MessagingException e) {
-            throw new RuntimeException("Falha ao enviar e-mail de redefinição", e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Falha ao enviar e-mail de redefinição via Resend", e);
         }
     }
 
-
-    // --- MÉTODOS AUXILIARES: HTML (Mantidos) ---
+    // --- MÉTODOS AUXILIARES: HTML (MANTIDOS ORIGINAIS) ---
 
     private String buildItensHtml(Pedido pedido) {
         StringBuilder itensHtml = new StringBuilder();
