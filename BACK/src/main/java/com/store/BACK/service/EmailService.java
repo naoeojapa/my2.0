@@ -34,7 +34,7 @@ public class EmailService {
     private final String COLOR_INFO = "#3498db";
 
     // ✅ AQUI ESTÁ A MUDANÇA IMPORTANTE: Seu domínio oficial
-    private static final String REMETENTE_PADRAO = "Japa Universe <japauniversestore@gmail.com>";
+    private static final String REMETENTE_PADRAO = "Japa Universe <nao-responda@japauniverse.com.br>";
 
     public void enviarConfirmacaoPagamento(Pedido pedido) {
         enviarPedidoRecebido(pedido);
